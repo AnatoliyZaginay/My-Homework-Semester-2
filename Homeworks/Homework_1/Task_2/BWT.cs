@@ -30,21 +30,21 @@ namespace Task_2
                     ++left;
                     --right;
                 }
-                if (right > firstIndex)
-                {
-                    Sort(array, line, firstIndex, right);
-                }
-                if (left < secondIndex)
-                {
-                    Sort(array, line, left, secondIndex);
-                }
+            }
+            if (right > firstIndex)
+            {
+                Sort(array, line, firstIndex, right);
+            }
+            if (left < secondIndex)
+            {
+                Sort(array, line, left, secondIndex);
             }
         }
 
         public static string Transform(string line, ref int index)
         {
             var circularShiftsArray = new int[line.Length];
-            for (int i = 0; i < line.Length; ++i)
+            for (int i = 0; i < circularShiftsArray.Length; ++i)
             {
                 circularShiftsArray[i] = i;
             }
@@ -119,7 +119,8 @@ namespace Task_2
                 index = positions[index];
             }
             Array.Reverse(result);
-            return new string(result);
+            string resultLine = new string(result);
+            return resultLine;
         }
     }
 }

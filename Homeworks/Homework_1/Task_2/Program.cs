@@ -6,13 +6,24 @@ namespace Task_2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Select an operation: \n1 - BWT\n2 - Reverse BWT");
+            if (!BWTTests.Tests())
+            {
+                Console.WriteLine("Tests failed");
+                return;
+            }
+            Console.Write("Enter a string: ");
             string line = Console.ReadLine();
             int index = 0;
             string transformedLine = BWT.Transform(line, ref index);
-            Console.WriteLine(transformedLine);
-            string reverse = BWT.ReverseTransform(transformedLine, index);
-            Console.WriteLine(reverse);
+            Console.WriteLine($"Transformed string: {transformedLine}, position of the last symbol: {index}");
+            string reverseLine = BWT.ReverseTransform(transformedLine, index);
+            Console.WriteLine($"Reverse string: {reverseLine}");
+            if (String.Compare(line, reverseLine) == 0)
+            {
+                Console.WriteLine("Strings are same");
+                return;
+            }
+            Console.WriteLine("Strings aren't same");
         }
     }
 }
