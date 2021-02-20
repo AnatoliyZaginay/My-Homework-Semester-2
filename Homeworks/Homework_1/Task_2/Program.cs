@@ -8,7 +8,11 @@ namespace Task_2
         {
             Console.WriteLine("Select an operation: \n1 - BWT\n2 - Reverse BWT");
             string line = Console.ReadLine();
-            Console.WriteLine(BWT.Transform(line));
+            int index = 0;
+            string transformedLine = BWT.Transform(line, ref index);
+            Console.WriteLine(transformedLine);
+            string reverse = BWT.ReverseTransform(transformedLine, index);
+            Console.WriteLine(reverse);
         }
     }
 }
