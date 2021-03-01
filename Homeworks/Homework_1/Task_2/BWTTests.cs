@@ -6,14 +6,11 @@ namespace Task_2
     {
         private static bool TransformTest()
         {
-            int firstIndex = 0;
-            int secondIndex = 0;
-            int thirdIndex = 0;
-            var firstLine = BWT.Transform("abcabcdabaabc", ref firstIndex);
-            var secondLine = BWT.Transform("ananananana", ref secondIndex);
-            var thirdLine = BWT.Transform("aaabbaaaabaabaa", ref thirdIndex);
-            return String.Compare(firstLine, "bdaccaaaabbbc") == 0 && String.Compare(secondLine, "nnnnnaaaaaa") == 0 &&
-                String.Compare(thirdLine, "bbaaabaaaaaabaa") == 0 && firstIndex == 3 &&
+            (var firstLine, var firstIndex) = BWT.Transform("abcabcdabaabc");
+            (var secondLine, var secondIndex) = BWT.Transform("ananananana");
+            (var thirdLine, var thirdIndex) = BWT.Transform("aaabbaaaabaabaa");
+            return firstLine == "bdaccaaaabbbc" && secondLine == "nnnnnaaaaaa" &&
+                thirdLine == "bbaaabaaaaaabaa" && firstIndex == 3 &&
                 secondIndex == 5 && thirdIndex == 4;
         }
 
@@ -22,8 +19,8 @@ namespace Task_2
             var firstLine = BWT.ReverseTransform("bdaccaaaabbbc", 3);
             var secondLine = BWT.ReverseTransform("nnnnnaaaaaa", 5);
             var thirdLine = BWT.ReverseTransform("bbaaabaaaaaabaa", 4);
-            return String.Compare(firstLine, "abcabcdabaabc") == 0 && String.Compare(secondLine, "ananananana") == 0 &&
-                String.Compare(thirdLine, "aaabbaaaabaabaa") == 0;
+            return firstLine == "abcabcdabaabc" && secondLine == "ananananana" &&
+                thirdLine == "aaabbaaaabaabaa";
         }
 
         public static bool Tests()

@@ -13,12 +13,11 @@ namespace Task_2
             }
             Console.Write("Enter a string: ");
             string line = Console.ReadLine();
-            int index = 0;
-            string transformedLine = BWT.Transform(line, ref index);
+            (var transformedLine, var index) = BWT.Transform(line);
             Console.WriteLine($"Transformed string: {transformedLine}, position of the last symbol: {index}");
             string reverseLine = BWT.ReverseTransform(transformedLine, index);
             Console.WriteLine($"Reverse string: {reverseLine}");
-            if (String.Compare(line, reverseLine) == 0)
+            if (line == reverseLine)
             {
                 Console.WriteLine("Strings are same");
                 return;
