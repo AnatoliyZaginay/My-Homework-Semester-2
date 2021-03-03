@@ -1,19 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Task_2
 {
-    class Calculator
+    /// <summary>
+    /// Class based on stack that can calculate the result of an arithmetic expression in postfix form.
+    /// </summary>
+    public class Calculator
     {
+        /// <summary>
+        /// Create a new calculator based on stack.
+        /// </summary>
+        /// <param name="stack">Stack used in the calculation.</param>
         public Calculator(IStack stack)
             => this.stack = stack;
 
         private IStack stack;
 
-        public double Calculate(string arithmeticalExpression)
+        /// <summary>
+        /// Calculate the result of an arithmetic expression.
+        /// </summary>
+        /// <param name="arithmeticExpression">Arithmetic expression to be calculated.</param>
+        /// <returns>Result of the calculations.</returns>
+        public double Calculate(string arithmeticExpression)
         {
-            string[] operationsAndOperands = arithmeticalExpression.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            string[] operationsAndOperands = arithmeticExpression.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < operationsAndOperands.Length; ++i)
             {
@@ -41,7 +51,7 @@ namespace Task_2
                         case "/":
                             if (Math.Abs(firstNumber) < 0.00000001)
                             {
-                                throw new DivideByZeroException();
+                                throw new DivideByZeroException("Attempt to divide by zero");
                             }
                             stack.Push(secondNumber / firstNumber);
                             break;
@@ -49,14 +59,14 @@ namespace Task_2
                 }
                 else
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Wrong symbol");
                 }
             }
 
             var result = stack.Pop();
-            if (!stack.IsEmpty())
+            if (!stack.Empty)
             {
-                throw new ArithmeticException();
+                throw new ArithmeticException("Stack isn't empty after completing all arithmetical operations");
             }
             return result;
         }

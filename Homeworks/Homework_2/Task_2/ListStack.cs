@@ -2,49 +2,56 @@
 
 namespace Task_2
 {
-    class ListStack : IStack
+    /// <summary>
+    /// Last-in-first out container for integers based on list.
+    /// </summary>
+    public class ListStack : IStack
     {
+        /// <summary>
+        /// Element of the stack contains integer value and reference to the next element.
+        /// </summary>
         private class StackElement
         {
+            /// <summary>
+            /// Create a new stack element.
+            /// </summary>
+            /// <param name="value">Value of the element.</param>
+            /// <param name="next">Reference to the next element.</param>
             public StackElement(double value, StackElement next)
             {
-                this.value = value;
-                this.next = next;
+                Value = value;
+                Next = next;
             }
 
-            private double value;
-            public double Value
-            {
-                get
-                {
-                    return value;
-                }
-            }
+            public double Value { get; }
 
-            private StackElement next;
-
-            public StackElement Next
-            {
-                get
-                {
-                    return next;
-                }
-            }
+            public StackElement Next { get; }
         }
 
         private StackElement head;
 
+        /// <summary>
+        /// Adds value to a top of the stack.
+        /// </summary>
+        /// <param name="value">Value to add.</param>
         public void Push(double value)
             => head = new StackElement(value, head);
 
-        public bool IsEmpty()
-            => head == null;
+        /// <summary>
+        /// True if the stack is empty otherwise false.
+        /// </summary>
+        public bool Empty =>
+            head == null;
 
+        /// <summary>
+        /// Gets value from a top of the stack and deletes it.
+        /// </summary>
+        /// <returns>Value from the top.</returns>
         public double Pop()
         {
-            if (IsEmpty())
+            if (Empty)
             {
-                throw new NullReferenceException();
+                throw new NullReferenceException("Stack is empty");
             }
             var returnedValue = head.Value;
             head = head.Next;

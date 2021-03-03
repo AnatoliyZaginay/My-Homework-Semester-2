@@ -6,7 +6,7 @@ namespace Task_2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Select the stack type: 1 - on array, 2 - on list");
+            Console.WriteLine("Select the stack type used in the calculator: 1 - on array, 2 - on list");
             var type = int.Parse(Console.ReadLine());
             IStack stack;
             if (type == 1)
