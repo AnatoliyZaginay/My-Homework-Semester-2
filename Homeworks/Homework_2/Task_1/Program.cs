@@ -8,6 +8,7 @@ namespace Task_1
         {
             var path = Console.ReadLine();
             LZW.Compress(path);
+            LZW.Decompress(path + ".zipped");
         }
     }
 }

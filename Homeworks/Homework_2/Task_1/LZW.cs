@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 using static System.Math;
 
 namespace Task_1
@@ -33,6 +34,64 @@ namespace Task_1
             var lastByte = BitConverter.GetBytes(trie.PointerCode);
             Array.Resize(ref lastByte, GetCountOfBytes(trie.CurrentCode));
             compressedFile.Write(lastByte);
+        }
+
+        private static void DictionaryInitialization(Dictionary<int, byte[]> dictionary)
+        {
+            for (int i = 0; i < 256; ++i)
+            {
+                byte[] byteArray = { (byte)i };
+                dictionary.Add(i, byteArray);
+            }
+        }
+
+        private static int GetIntCode(byte[] byteArray)
+        {
+            var arrayForCode = new byte[4];
+            Array.Copy(byteArray, arrayForCode, byteArray.Length);
+            return BitConverter.ToInt32(arrayForCode, 0);
+        }
+
+        private static byte[] GetNewByteArray(byte[] firstArray, byte[] secondArray)
+        {
+            var newByteArray = new byte[firstArray.Length + 1];
+            Array.Copy(firstArray, newByteArray, firstArray.Length);
+            newByteArray[firstArray.Length] = secondArray[0];
+            return newByteArray;
+        }
+
+        static public void Decompress(string path)
+        {
+            using FileStream sourceFile = File.OpenRead(path);
+            var decompressedFilePath = path.Remove(path.Length - 7, 7);
+            decompressedFilePath = decompressedFilePath + "new";
+            using FileStream decompressedFile = File.OpenWrite(decompressedFilePath);
+            var dictionary = new Dictionary<int, byte[]>();
+            DictionaryInitialization(dictionary);
+
+            var position = 0;
+            while (position < sourceFile.Length)
+            {
+                var currentLength = GetCountOfBytes(dictionary.Count - 1);
+                position += currentLength;
+
+                var currentBytes = new byte[currentLength];
+                for (int i = 0; i < currentLength; ++i)
+                {
+                    currentBytes[i] = (byte)sourceFile.ReadByte();
+                }
+
+                var code = GetIntCode(currentBytes);
+                
+                if (position != 1)
+                {
+                    dictionary[dictionary.Count - 1] = GetNewByteArray(dictionary[dictionary.Count - 1], dictionary[code]);
+                }
+
+                dictionary.Add(dictionary.Count, dictionary[code]);
+
+                decompressedFile.Write(dictionary[code]);
+            }
         }
     }
 }
