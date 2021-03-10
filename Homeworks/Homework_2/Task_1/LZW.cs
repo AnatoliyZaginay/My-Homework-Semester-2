@@ -10,6 +10,13 @@ namespace Task_1
         private static int GetCountOfBytes(int number)
             => (int)Ceiling(Log2(number + 1) / 8);
 
+        private static void WriteByteCode(Trie trie, FileStream file)
+        {
+            var byteCode = BitConverter.GetBytes(trie.PointerCode);
+            Array.Resize(ref byteCode, GetCountOfBytes(trie.CurrentCode));
+            file.Write(byteCode);
+        }
+
         public static void Compress(string path)
         {
             var trie = new Trie();
@@ -25,15 +32,11 @@ namespace Task_1
                 }
                 else
                 {
-                    var byteCode = BitConverter.GetBytes(trie.PointerCode);
-                    Array.Resize(ref byteCode, GetCountOfBytes(trie.CurrentCode));
-                    compressedFile.Write(byteCode);
+                    WriteByteCode(trie, compressedFile);
                     trie.Add(currentByte);
                 }
             }
-            var lastByte = BitConverter.GetBytes(trie.PointerCode);
-            Array.Resize(ref lastByte, GetCountOfBytes(trie.CurrentCode));
-            compressedFile.Write(lastByte);
+            WriteByteCode(trie, compressedFile);
         }
 
         private static void DictionaryInitialization(Dictionary<int, byte[]> dictionary)
@@ -64,7 +67,6 @@ namespace Task_1
         {
             using FileStream sourceFile = File.OpenRead(path);
             var decompressedFilePath = path.Remove(path.Length - 7, 7);
-            decompressedFilePath = decompressedFilePath + "new";
             using FileStream decompressedFile = File.OpenWrite(decompressedFilePath);
             var dictionary = new Dictionary<int, byte[]>();
             DictionaryInitialization(dictionary);
