@@ -32,7 +32,7 @@ namespace Task_2.Tests
 
         [TestCaseSource(nameof(CalculatorType))]
         public void NotEnoughNumbersTest(Calculator calculator)
-            => Assert.Throws<System.NullReferenceException>(() => calculator.Calculate("5 +"));
+            => Assert.Throws<System.InvalidOperationException>(() => calculator.Calculate("5 +"));
 
         [TestCaseSource(nameof(CalculatorType))]
         public void NotEnoughOperationsTest(Calculator calculator)

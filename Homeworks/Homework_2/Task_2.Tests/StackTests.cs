@@ -29,12 +29,13 @@ namespace Task_2.Tests
         {
             stack.Push(5);
             stack.Push(10);
-            Assert.AreEqual((10, 5), (stack.Pop(), stack.Pop()));
+            Assert.AreEqual(10, stack.Pop());
+            Assert.AreEqual(5, stack.Pop());
         }
 
         [TestCaseSource(nameof(StackTypes))]
         public void PopShouldThrowExceptionIfStackIsEmpty(IStack stack)
-            => Assert.Throws<System.NullReferenceException>(() => stack.Pop());
+            => Assert.Throws<System.InvalidOperationException>(() => stack.Pop());
 
         private static IEnumerable<IStack> StackTypes()
         {

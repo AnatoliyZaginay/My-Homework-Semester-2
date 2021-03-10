@@ -38,7 +38,7 @@ namespace Task_2
         {
             if (Empty)
             {
-                throw new NullReferenceException("Stack is empty");
+                throw new InvalidOperationException("Stack is empty");
             }
             --headIndex;
             return array[headIndex];

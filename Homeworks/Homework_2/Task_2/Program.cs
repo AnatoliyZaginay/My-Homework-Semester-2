@@ -8,15 +8,7 @@ namespace Task_2
         {
             Console.WriteLine("Select the stack type used in the calculator: 1 - on array, 2 - on list");
             var type = int.Parse(Console.ReadLine());
-            IStack stack;
-            if (type == 1)
-            {
-                stack = new ArrayStack();
-            }
-            else
-            {
-                stack = new ListStack();
-            }
+            var stack = type == 1 ? (IStack) new ArrayStack() : new ListStack();
             Console.Write("Eneter an arithmetical expression in postfix form: ");
             var arithmeticalExpression = Console.ReadLine();
             var calculator = new Calculator(stack);
@@ -24,7 +16,7 @@ namespace Task_2
             {
                 Console.WriteLine(calculator.Calculate(arithmeticalExpression));
             }
-            catch (NullReferenceException)
+            catch (InvalidOperationException)
             {
                 Console.WriteLine("Error: not enough numbers");
                 return;
