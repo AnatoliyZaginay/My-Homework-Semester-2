@@ -5,7 +5,7 @@ using static System.Math;
 
 namespace Task_1
 {
-    static class LZW
+    public static class LZW
     {
         private static int GetCountOfBytes(int number)
             => (int)Ceiling(Log2(number + 1) / 8);
@@ -78,10 +78,7 @@ namespace Task_1
                 position += currentLength;
 
                 var currentBytes = new byte[currentLength];
-                for (int i = 0; i < currentLength; ++i)
-                {
-                    currentBytes[i] = (byte)sourceFile.ReadByte();
-                }
+                sourceFile.Read(currentBytes);
 
                 var code = GetIntCode(currentBytes);
                 

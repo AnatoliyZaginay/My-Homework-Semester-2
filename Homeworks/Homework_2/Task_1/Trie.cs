@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Task_1
 {
-    class Trie
+    public class Trie
     {
         private class TrieElement
         {
