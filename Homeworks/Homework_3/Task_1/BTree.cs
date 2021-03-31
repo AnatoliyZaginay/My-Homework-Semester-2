@@ -4,12 +4,16 @@ namespace Task_1
 {
     class BTree
     {
-        public int degree;
+        private int degree;
 
         private Node root;
 
         public BTree(int treeDegree)
         {
+            if (treeDegree < 2)
+            {
+                throw new ArgumentException("Invalid degree value");
+            }
             degree = treeDegree;
             root = null;
         }
@@ -101,15 +105,21 @@ namespace Task_1
                     {
                         newNode.Childrens[currentIndex].Parent = newNode;
                     }
-                    if (i == endIndex - 1)
-                    {
-                        newNode.Childrens[currentIndex + 1] = Childrens[i + 1];
-                        if (newNode.Childrens[currentIndex + 1] != null)
-                        {
-                            newNode.Childrens[currentIndex + 1].Parent = newNode;
-                        }
-                    }
+                    //if (i == endIndex - 1)
+                    //{
+                    //    newNode.Childrens[currentIndex + 1] = Childrens[i + 1];
+                    //    if (newNode.Childrens[currentIndex + 1] != null)
+                    //    {
+                    //        newNode.Childrens[currentIndex + 1].Parent = newNode;
+                    //    }
+                    //}
                     ++newNode.Count;
+                }
+
+                newNode.Childrens[newNode.Count] = Childrens[endIndex];
+                if (newNode.Childrens[newNode.Count] != null)
+                {
+                    newNode.Childrens[newNode.Count].Parent = newNode;
                 }
             }
 
@@ -183,7 +193,7 @@ namespace Task_1
                 }
             }
 
-            public void DeleteDataByKeyFromLeaf(string key)
+            public void DeleteDataByKey(string key)
             {
                 int position = -1;
                 for (int i = 0; i < Count; ++i)
@@ -210,14 +220,6 @@ namespace Task_1
                 --Count;
             }
 
-            public void Rotation(Node parent, Node sibling, int position, bool type)
-            {
-                int siblingIndex = type ? sibling.Count - 1 : 0;
-                AddData(parent.Data[position].key, parent.Data[position].value);
-                parent.Data[position] = sibling.Data[siblingIndex];
-                DeleteDataByKeyFromLeaf(sibling.Data[siblingIndex].key);
-            }
-
             public Node FindNode(string key)
             {
                 if (IsLeaf)
@@ -232,10 +234,10 @@ namespace Task_1
                     }
                     if (String.Compare(Data[i].key, key) > 0)
                     {
-                        return Childrens[i];
+                        return Childrens[i].FindNode(key);
                     }
                 }
-                return Childrens[Count];
+                return Childrens[Count].FindNode(key);
             }
         }
 
@@ -280,6 +282,7 @@ namespace Task_1
             mergedNode.Data[mergedNode.Count] = parent.Data[position];
             ++mergedNode.Count;
             secondNode.CopyNode(mergedNode, 0, secondNode.Count);
+            mergedNode.IsLeaf = mergedNode.Childrens[0] == null;
             return mergedNode;
         }
 
@@ -290,17 +293,53 @@ namespace Task_1
             return index == -1 ? (null, -1) : (node, index);
         }
 
-        private void Rebalance(Node node)
+        private void RightRotation(Node node, Node parent, Node sibling, int position)
         {
-            if (node.Count >= degree - 1 || node == root)
+            for (int i = node.Count - 1; i >= 0; --i)
             {
-                return;
+                node.Data[i + 1] = node.Data[i];
+                node.Childrens[i + 2] = node.Childrens[i + 1];
             }
+            node.Childrens[1] = node.Childrens[0];
+            node.Data[0] = parent.Data[position];
+            ++node.Count;
+            parent.Data[position] = sibling.Data[sibling.Count - 1];
+            node.Childrens[0] = sibling.Childrens[sibling.Count];
+            if (node.Childrens[0] != null)
+            {
+                node.Childrens[0].Parent = node;
+            }
+            sibling.Childrens[sibling.Count] = null;
+            sibling.Data[sibling.Count - 1] = (null, null);
+            --sibling.Count;
+        }
 
-            Node parent = node.Parent;
+        private void LeftRotation(Node node, Node parent, Node sibling, int position)
+        {
+            node.Data[node.Count] = parent.Data[position];
+            ++node.Count;
+            parent.Data[position] = sibling.Data[0];
+            node.Childrens[node.Count] = sibling.Childrens[0];
+            if (node.Childrens[node.Count] != null)
+            {
+                node.Childrens[node.Count].Parent = node;
+            }
+            for (int i = 0; i < sibling.Count - 1; ++i)
+            {
+                sibling.Data[i] = sibling.Data[i + 1];
+                sibling.Childrens[i] = sibling.Childrens[i + 1];
+            }
+            sibling.Childrens[sibling.Count - 1] = sibling.Childrens[sibling.Count];
+            sibling.Childrens[sibling.Count] = null;
+            sibling.Data[sibling.Count - 1] = (null, null);
+            --sibling.Count;
+        }
+
+        private (Node, Node) GetSiblings(Node node, Node parent, out int position)
+        {
             Node leftSibling = null;
             Node rightSibling = null;
-            int position = 0;
+            position = 0;
             for (int i = 0; i < parent.Count + 1; ++i)
             {
                 if (parent.Childrens[i] == node)
@@ -322,37 +361,35 @@ namespace Task_1
                     break;
                 }
             }
+            return (leftSibling, rightSibling);
+        }
+
+        private void Rebalance(Node node)
+        {
+            if (node.Count >= degree - 1 || node == root)
+            {
+                return;
+            }
+
+            Node parent = node.Parent;
+            (Node leftSibling, Node rightSibling) = GetSiblings(node, parent, out int position);
 
             if (leftSibling != null && leftSibling.Count > degree - 1)
             {
-                node.AddData(parent.Data[position - 1].key, parent.Data[position - 1].value);
-                parent.Data[position - 1] = leftSibling.Data[leftSibling.Count - 1];
-                node.Childrens[0] = leftSibling.Childrens[leftSibling.Count];
-                if (node.Childrens[0] != null)
-                {
-                    node.Childrens[0].Parent = node;
-                }
-                leftSibling.DeleteDataByKeyFromLeaf(leftSibling.Data[leftSibling.Count - 1].key);
+                RightRotation(node, parent, leftSibling, position - 1);
                 return;
             }
 
             if (rightSibling != null && rightSibling.Count > degree - 1)
             {
-                node.AddData(parent.Data[position].key, parent.Data[position].value);
-                parent.Data[position] = rightSibling.Data[0];
-                node.Childrens[node.Count] = rightSibling.Childrens[0];
-                if (node.Childrens[node.Count] != null)
-                {
-                    node.Childrens[node.Count].Parent = node;
-                }
-                rightSibling.DeleteDataByKeyFromLeaf(rightSibling.Data[0].key);
+                LeftRotation(node, parent, rightSibling, position);
                 return;
             }
 
             Node newNode = leftSibling != null ? MergeNodes(leftSibling, node, parent, position - 1) : MergeNodes(node, rightSibling, parent, position);
             int index = leftSibling != null ? position : position + 1;
             parent.Childrens[index] = newNode;
-            parent.DeleteDataByKeyFromLeaf(parent.Data[index - 1].key);
+            parent.DeleteDataByKey(parent.Data[index - 1].key);
             
             if (parent.Count == 0 && parent == root)
             {
@@ -375,29 +412,24 @@ namespace Task_1
             {
                 return node;
             }
-            return node.Childrens[node.Count];
-        }
-
-        private Node GetMostLeftNodeOfSubtree(Node node)
-        {
-            if (node.IsLeaf)
-            {
-                return node;
-            }
-            return node.Childrens[0];
+            return GetMostRightNodeOfSubtree(node.Childrens[node.Count]);
         }
 
         public void Delete(string key)
         {
+            if (root.Count == 0)
+            {
+                throw new InvalidOperationException("The tree is empty");
+            }
             (Node node, int keyIndex) = GetNodeAndKey(key);
             if (keyIndex == -1)
             {
-                return;
+                throw new ArgumentException("The key isn't contained in the tree");
             }
 
             if (node.IsLeaf)
             {
-                node.DeleteDataByKeyFromLeaf(key);
+                node.DeleteDataByKey(key);
                 Rebalance(node);
                 return;
             }
@@ -407,6 +439,34 @@ namespace Task_1
             mostRightNode.Data[mostRightNode.Count - 1] = (null, null);
             --mostRightNode.Count;
             Rebalance(mostRightNode);
+        }
+
+        public bool Contains(string key)
+        {
+            Node node = root.FindNode(key);
+            return node.GetIndex(key) != -1;
+        }
+
+        public string GetValue(string key)
+        {
+            Node node = root.FindNode(key);
+            int index = node.GetIndex(key);
+            if (index == -1)
+            {
+                throw new ArgumentException("The key isn't contained in the tree");
+            }
+            return node.Data[index].value;
+        }
+
+        public void ChangeValue(string key, string value)
+        {
+            Node node = root.FindNode(key);
+            int index = node.GetIndex(key);
+            if (index == -1)
+            {
+                throw new ArgumentException("The key isn't contained in the tree");
+            }
+            node.Data[index].value = value;
         }
     }
 }

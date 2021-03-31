@@ -4,61 +4,114 @@ namespace Task_1
 {
     class Program
     {
+        static void Commands()
+        {
+            Console.WriteLine("\nCommands:");
+            Console.WriteLine("0 - Exit");
+            Console.WriteLine("1 - Insert a key-value pair into the tree");
+            Console.WriteLine("2 - Delete value by key");
+            Console.WriteLine("3 - Get the value by key");
+            Console.WriteLine("4 - Check if the tree contains a key");
+            Console.WriteLine("5 - Change the value by key\n");
+        }
+
         static void Main(string[] args)
         {
-            BTree tree = new BTree(3);
-            tree.Insert("1", "1");
-            tree.Insert("2", "2");
-            tree.Insert("3", "3");
-            tree.Insert("4", "4");
-            tree.Insert("5", "5");
-            tree.Insert("6", "6");
-            tree.Insert("7", "7");
-            tree.Insert("8", "3");
-            tree.Insert("9", "4");
-            tree.Insert("10", "5");
-            tree.Insert("11", "1");
-            tree.Insert("12", "2");
-            tree.Insert("13", "3");
-            tree.Insert("14", "4");
-            tree.Insert("15", "5");
-            tree.Insert("16", "6");
-            tree.Insert("17", "7");
-            tree.Insert("18", "3");
-            tree.Insert("19", "4");
-            tree.Insert("20", "5");
-            tree.Insert("21", "2");
-            tree.Insert("22", "2");
-            tree.Insert("23", "2");
-            tree.Insert("24", "2");
-            tree.Insert("25", "2");
-            tree.Insert("26", "2");
-            tree.Insert("27", "2");
+            Console.Write("Enter a degree of B-Tree: ");
+            int degree = int.Parse(Console.ReadLine());
+            BTree tree;
+            try
+            {
+                tree = new BTree(degree);
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine("The degree of the tree must be at least 2.");
+                return;
+            }
 
-            tree.Delete("17");
-            tree.Delete("2");
-            tree.Delete("19");
-            tree.Delete("18");
-            tree.Delete("22");
-            tree.Delete("21");
-            tree.Delete("20");
-            tree.Delete("11");
-            tree.Delete("1");
-            tree.Delete("5");
-            tree.Delete("14");
-            tree.Delete("23");
-            tree.Delete("25");
-            tree.Delete("9");
-            tree.Delete("8");
-            tree.Delete("27");
-            tree.Delete("10");
-            tree.Delete("13");
-            tree.Delete("26");
-            tree.Delete("3");
-            tree.Delete("24");
-            tree.Delete("7");
-            tree.Delete("12");
-            tree.Delete("15");
+            int commandNumber = -1;
+            while (commandNumber != 0)
+            {
+                Commands();
+                Console.Write("Enter a number of command: ");
+                commandNumber = int.Parse(Console.ReadLine());
+                string key;
+                string value;
+                switch (commandNumber)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        Console.Write("Enter a key: ");
+                        key = Console.ReadLine();
+                        Console.Write("Enter a value: ");
+                        value = Console.ReadLine();
+                        tree.Insert(key, value);
+                        Console.WriteLine("The key-value pair was added successfully.");
+                        break;
+                    case 2:
+                        Console.Write("Enter a key: ");
+                        key = Console.ReadLine();
+                        try
+                        {
+                            tree.Delete(key);
+                            Console.WriteLine("The key-value pair was deleted successfully.");
+                        }
+                        catch (ArgumentException)
+                        {
+                            Console.WriteLine("The key isn't contained in the tree.");
+                        }
+                        catch (InvalidOperationException)
+                        {
+                            Console.WriteLine("The tree is empty");
+                        }
+                        break;
+                    case 3:
+                        Console.Write("Enter a key: ");
+                        key = Console.ReadLine();
+                        try
+                        {
+                            value = tree.GetValue(key);
+                            Console.WriteLine($"Returned value: {value}");
+                        }
+                        catch (ArgumentException)
+                        {
+                            Console.WriteLine("The key isn't contained in the tree.");
+                        }
+                        break;
+                    case 4:
+                        Console.Write("Enter a key: ");
+                        key = Console.ReadLine();
+                        if (tree.Contains(key))
+                        {
+                            Console.WriteLine("The key is contained in the tree.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("The key isn't contained in the tree.");
+                        }
+                        break;
+                    case 5:
+                        Console.Write("Enter a key: ");
+                        key = Console.ReadLine();
+                        Console.Write("Enter a value: ");
+                        value = Console.ReadLine();
+                        try
+                        {
+                            tree.ChangeValue(key, value);
+                            Console.WriteLine("The value was changed.");
+                        }
+                        catch (ArgumentException)
+                        {
+                            Console.WriteLine("The key isn't contained in the tree.");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Invalid command number.");
+                        break;
+                }
+            }
         }
     }
 }
