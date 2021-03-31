@@ -2,12 +2,25 @@
 
 namespace Task_1
 {
-    class BTree
+    /// <summary>
+    /// A tree containing from t - 1 to 2t - 1 elements in a node, where t is the degree of the tree.
+    /// </summary>
+    public class BTree
     {
+        /// <summary>
+        /// Degree of the b-tree.
+        /// </summary>
         private int degree;
 
+        /// <summary>
+        /// Pointer to the root of the b-tree.
+        /// </summary>
         private Node root;
 
+        /// <summary>
+        /// Creates a new b-tree with the specified degree.
+        /// </summary>
+        /// <param name="treeDegree">Degree of the b-tree</param>
         public BTree(int treeDegree)
         {
             if (treeDegree < 2)
@@ -105,14 +118,6 @@ namespace Task_1
                     {
                         newNode.Childrens[currentIndex].Parent = newNode;
                     }
-                    //if (i == endIndex - 1)
-                    //{
-                    //    newNode.Childrens[currentIndex + 1] = Childrens[i + 1];
-                    //    if (newNode.Childrens[currentIndex + 1] != null)
-                    //    {
-                    //        newNode.Childrens[currentIndex + 1].Parent = newNode;
-                    //    }
-                    //}
                     ++newNode.Count;
                 }
 
@@ -241,6 +246,9 @@ namespace Task_1
             }
         }
 
+        /// <summary>
+        /// Inserts a key-value pair to the tree.
+        /// </summary>
         public void Insert(string key, string value)
         {
             if (root == null)
@@ -415,6 +423,9 @@ namespace Task_1
             return GetMostRightNodeOfSubtree(node.Childrens[node.Count]);
         }
 
+        /// <summary>
+        /// Removes a key-value pair from the tree by key.
+        /// </summary>
         public void Delete(string key)
         {
             if (root.Count == 0)
@@ -441,12 +452,18 @@ namespace Task_1
             Rebalance(mostRightNode);
         }
 
+        /// <summary>
+        /// Returns true if the key is contained in the tree, otherwise returns false.
+        /// </summary>
         public bool Contains(string key)
         {
             Node node = root.FindNode(key);
             return node.GetIndex(key) != -1;
         }
 
+        /// <summary>
+        /// Returns the value by key.
+        /// </summary>
         public string GetValue(string key)
         {
             Node node = root.FindNode(key);
@@ -458,6 +475,9 @@ namespace Task_1
             return node.Data[index].value;
         }
 
+        /// <summary>
+        /// Changes the value by key.
+        /// </summary>
         public void ChangeValue(string key, string value)
         {
             Node node = root.FindNode(key);
