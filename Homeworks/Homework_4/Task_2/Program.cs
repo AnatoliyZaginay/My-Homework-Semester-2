@@ -4,43 +4,101 @@ namespace Task_2
 {
     class Program
     {
+        static void Commands()
+        {
+            Console.WriteLine("\nCommands:");
+            Console.WriteLine("0 - exit");
+            Console.WriteLine("1 - add value:");
+            Console.WriteLine("2 - change value");
+            Console.WriteLine("3 - get value");
+            Console.WriteLine("4 - delete element\n");
+        }
+
         static void Main(string[] args)
         {
-            List list = new List();
-            list.Add(1, 0);
-            list.Add(2, 1);
-            list.Add(4, 2);
-            list.Add(5, 3);
-            list.Add(3, 2);
+            var list = new UniqueList();
 
-            list.ChangeValue(221, 0);
-            list.ChangeValue(222, 1);
-            list.ChangeValue(223, 2);
-            list.ChangeValue(224, 3);
-            list.ChangeValue(225, 4);
+            var commandNumber = -1;
+            while (commandNumber != 0)
+            {
+                Commands();
+                commandNumber = int.Parse(Console.ReadLine());
 
-            list.Delete(0);
-            list.Delete(3);
-            list.Delete(1);
-            list.Delete(1);
-            list.Delete(0);
-
-            UniqueList uList = new UniqueList();
-            uList.Add(1, 0);
-            uList.Add(2, 1);
-            uList.Add(4, 2);
-            uList.Add(5, 3);
-            uList.Add(3, 2);
-            uList.Add(6, 5);
-            uList.Add(3, 2);
-
-            uList.ChangeValue(221, 0);
-            uList.ChangeValue(222, 1);
-            uList.ChangeValue(223, 2);
-            uList.ChangeValue(224, 3);
-            uList.ChangeValue(225, 4);
-            uList.ChangeValue(6, 0);
-
+                int index = 0;
+                int value = 0;
+                switch (commandNumber)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        Console.Write("Enter a value: ");
+                        value = int.Parse(Console.ReadLine());
+                        Console.Write("Enter an index: ");
+                        index = int.Parse(Console.ReadLine());
+                        try
+                        {
+                            list.Add(value, index);
+                            Console.WriteLine("Element was successfully added.");
+                        }
+                        catch (ElementAlreadyExistsException)
+                        {
+                            Console.WriteLine("List already contains this value.");
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine("Index is incorrect.");
+                        }
+                        break;
+                    case 2:
+                        Console.Write("Enter a value to change: ");
+                        value = int.Parse(Console.ReadLine());
+                        Console.Write("Enter an index: ");
+                        index = int.Parse(Console.ReadLine());
+                        try
+                        {
+                            list.ChangeValue(value, index);
+                            Console.WriteLine("Value was successfully changed.");
+                        }
+                        catch (ElementAlreadyExistsException)
+                        {
+                            Console.WriteLine("List already contains this value.");
+                        }
+                        catch (ElementDoesNotExistException)
+                        {
+                            Console.WriteLine("Element doesn't exist.");
+                        }
+                        break;
+                    case 3:
+                        Console.Write("Enter an index: ");
+                        index = int.Parse(Console.ReadLine());
+                        try
+                        {
+                            value = list.GetValue(index);
+                            Console.WriteLine($"Returned value: {value}");
+                        }
+                        catch (ElementDoesNotExistException)
+                        {
+                            Console.WriteLine("Element doesn't exist.");
+                        }
+                        break;
+                    case 4:
+                        Console.Write("Enter an index: ");
+                        index = int.Parse(Console.ReadLine());
+                        try
+                        {
+                            list.Delete(index);
+                            Console.WriteLine("Element was successfully deleted.");
+                        }
+                        catch (ElementDoesNotExistException)
+                        {
+                            Console.WriteLine("Element doesn't exist.");
+                        }
+                        break;
+                    default:
+                        Console.WriteLine("Command number is incorrect.");
+                        break;
+                }
+            }
         }
     }
 }
