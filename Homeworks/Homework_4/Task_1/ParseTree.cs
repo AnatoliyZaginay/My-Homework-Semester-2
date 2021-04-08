@@ -1,15 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Task_1
 {
+    /// <summary>
+    /// Arithmetic expression parsing tree.
+    /// </summary>
     public class ParseTree
     {
+        /// <summary>
+        /// Pointer to the root of the parse tree.
+        /// </summary>
         private ITreeElement root;
 
+        /// <summary>
+        /// Creates a parse tree by the specified arithmetic expression.
+        /// </summary>
+        /// <param name="arithmeticExpression">Specified arithmetic expression.</param>
         public ParseTree(string arithmeticExpression)
         {
             char[] separationSymbols = { ' ', '(', ')' };
@@ -25,7 +31,7 @@ namespace Task_1
         {
             if (index >= expression.Length)
             {
-                return null;
+                throw new ArgumentException();
             }
 
             if (isOperator(expression[index]))
@@ -48,9 +54,15 @@ namespace Task_1
             }
         }
 
+        /// <summary>
+        /// Returns the result of an arithmetic expression.
+        /// </summary>
         public double Calculate()
             => root.Calculate();
 
+        /// <summary>
+        /// Returns a string of an arithmetic expression.
+        /// </summary>
         public string Print()
             => root.Print();
     }

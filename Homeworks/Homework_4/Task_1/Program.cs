@@ -24,7 +24,7 @@ namespace Task_1
             }
             catch (ArgumentException)
             {
-                Console.WriteLine("Error: invalid symbol.");
+                Console.WriteLine("Error: invalid expression.");
                 return;
             }
 
