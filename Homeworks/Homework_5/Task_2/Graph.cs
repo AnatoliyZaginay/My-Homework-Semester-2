@@ -4,45 +4,66 @@ using System.IO;
 
 namespace Task_2
 {
+    /// <summary>
+    /// Undirected graph class.
+    /// </summary>
     public class Graph
     {
+        /// <summary>
+        /// An adjacency matrix containing the lengths between the vertices.
+        /// </summary>
         public int[,] MatrixOfLengths { get; }
 
+        /// <summary>
+        /// An adjacency matrix containing boolean values that indicate whether the vertices are connected.
+        /// </summary>
         public bool[,] MatrixOfConnections { get; }
 
-        public int CountOfVertexes { get; }
+        /// <summary>
+        /// Count of vertices in graph.
+        /// </summary>
+        public int CountOfVertices { get; }
 
+        /// <summary>
+        /// Creates a new graph by adjaceny matrices.
+        /// </summary>
+        /// <param name="matrixOfLengths">Matrix of lengths.</param>
+        /// <param name="matrixOfConnections">Matrix of connections.</param>
         public Graph(int[,] matrixOfLengths, bool[,] matrixOfConnections)
         {
             if (matrixOfConnections == null || matrixOfLengths == null || matrixOfConnections.Length != matrixOfLengths.Length ||
                 matrixOfConnections.GetLength(0) != matrixOfConnections.GetLength(1) || matrixOfLengths.GetLength(0) != matrixOfLengths.GetLength(1))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Graph matrix is incorrect");
             }
             MatrixOfLengths = matrixOfLengths;
             MatrixOfConnections = matrixOfConnections;
-            CountOfVertexes = matrixOfLengths.GetLength(0);
+            CountOfVertices = matrixOfLengths.GetLength(0);
         }
 
+        /// <summary>
+        /// Creates a new graph by the file containing adjacency lists.
+        /// </summary>
+        /// <param name="path">Path to the file.</param>
         public Graph(string path)
         {
-            (int[,] matrixOfLengths, bool[,] matrixOfConnections) = ReadGraphFromFile(path);
+            (int[,] matrixOfLengths, bool[,] matrixOfConnections) = ReadFromFile(path);
 
             if (matrixOfConnections == null || matrixOfLengths == null)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Graph matrix is empty");
             }
 
             MatrixOfLengths = matrixOfLengths;
             MatrixOfConnections = matrixOfConnections;
-            CountOfVertexes = matrixOfLengths.GetLength(0);
+            CountOfVertices = matrixOfLengths.GetLength(0);
         }
 
         private static int[][] GetGraphInfo(string path)
         {
             if (!File.Exists(path))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("File not exists");
             }
             var lines = File.ReadAllLines(path);
 
@@ -63,7 +84,7 @@ namespace Task_2
                     }
                     else
                     {
-                        throw new ArgumentException();
+                        throw new ArgumentException("Incorrect input data type");
                     }
                 }
             }
@@ -71,7 +92,7 @@ namespace Task_2
             return graphInfo;
         }
 
-        private static int GetCountOfVertexes(int[][] graphInfo)
+        private static int GetCountOfVertices(int[][] graphInfo)
         {
             int maximumNumber = 0;
             for (int i = 0; i < graphInfo.GetLength(0); ++i)
@@ -91,19 +112,19 @@ namespace Task_2
 
             if (maximumNumber == 0)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Incorrect vertex number");
             }
 
             return maximumNumber;
         }
-        private static (int[,], bool[,]) ReadGraphFromFile(string path)
+        private static (int[,], bool[,]) ReadFromFile(string path)
         {
             var graphInfo = GetGraphInfo(path);
-            var countOfVertexes = GetCountOfVertexes(graphInfo);
-            var matrixOfLengths = new int[countOfVertexes, countOfVertexes];
-            var matrixOfConnections = new bool[countOfVertexes, countOfVertexes];
+            var countOfVertices = GetCountOfVertices(graphInfo);
+            var matrixOfLengths = new int[countOfVertices, countOfVertices];
+            var matrixOfConnections = new bool[countOfVertices, countOfVertices];
 
-            for (int i = 0; i < countOfVertexes; ++i)
+            for (int i = 0; i < countOfVertices; ++i)
             {
                 matrixOfConnections[i, i] = true;
             }
@@ -112,13 +133,13 @@ namespace Task_2
             {
                 for (int j = 1; j < graphInfo[i].Length - 1; j += 2)
                 {
-                    if (graphInfo[i][0] <= 0 || graphInfo[i][0] > countOfVertexes ||
-                        graphInfo[i][j] <= 0 || graphInfo[i][j] > countOfVertexes)
+                    if (graphInfo[i][0] <= 0 || graphInfo[i][0] > countOfVertices ||
+                        graphInfo[i][j] <= 0 || graphInfo[i][j] > countOfVertices)
                     {
-                        throw new ArgumentException();
+                        throw new ArgumentException("Incorrect vertex number");
                     }
 
-                        matrixOfConnections[graphInfo[i][0] - 1, graphInfo[i][j] - 1] = true;
+                    matrixOfConnections[graphInfo[i][0] - 1, graphInfo[i][j] - 1] = true;
                     matrixOfConnections[graphInfo[i][j] - 1, graphInfo[i][0] - 1] = true;
                     matrixOfLengths[graphInfo[i][0] - 1, graphInfo[i][j] - 1] = graphInfo[i][j + 1];
                     matrixOfLengths[graphInfo[i][j] - 1, graphInfo[i][0] - 1] = graphInfo[i][j + 1];
@@ -130,7 +151,7 @@ namespace Task_2
 
         private void DFS(int numberOfVertex, bool[] visited)
         {
-            for (int i = 0; i < CountOfVertexes; ++i)
+            for (int i = 0; i < CountOfVertices; ++i)
             {
                 if (MatrixOfConnections[numberOfVertex, i] && !visited[i])
                 {
@@ -140,12 +161,15 @@ namespace Task_2
             }
         }
 
+        /// <summary>
+        /// Checks if the graph is connected.
+        /// </summary>
         public bool IsConnected()
         {
-            var visited = new bool[CountOfVertexes];
+            var visited = new bool[CountOfVertices];
             DFS(0, visited);
 
-            for (int i = 0; i < CountOfVertexes; ++i)
+            for (int i = 0; i < CountOfVertices; ++i)
             {
                 if (!visited[i])
                 {
@@ -155,6 +179,9 @@ namespace Task_2
             return true;
         }
 
+        /// <summary>
+        /// Graph edge class, that helps in the algorithm of making a maximum spanning tree.
+        /// </summary>
         private class Edge
         {
             public int FirstVertex { get; set; }
@@ -171,21 +198,28 @@ namespace Task_2
             }
         }
 
-        public Graph GetSpanningTree()
+        /// <summary>
+        /// Makes maximum spanning tree.
+        /// </summary>
+        public Graph MakeMaximumSpanningTree()
         {
-            var newLengths = new int[CountOfVertexes, CountOfVertexes];
-            var newConnections = new bool[CountOfVertexes, CountOfVertexes];
+            var newLengths = new int[CountOfVertices, CountOfVertices];
+            var newConnections = new bool[CountOfVertices, CountOfVertices];
 
             var edges = new List<Edge>();
-            var visited = new bool[CountOfVertexes];
+            var visited = new bool[CountOfVertices];
+
+            for (int i = 0; i < CountOfVertices; ++i)
+            {
+                newConnections[i, i] = true;
+            }
 
             int currentVertex = 0;
-            for (int i = 0; i < CountOfVertexes - 1; ++i)
+            for (int i = 0; i < CountOfVertices - 1; ++i)
             {
                 visited[currentVertex] = true;
-                newConnections[currentVertex, currentVertex] = true;
 
-                for (int j = 0; j < CountOfVertexes; ++j)
+                for (int j = 0; j < CountOfVertices; ++j)
                 {
                     if (!visited[j] && MatrixOfConnections[currentVertex, j])
                     {
@@ -220,15 +254,19 @@ namespace Task_2
             return new Graph(newLengths, newConnections);
         }
 
-        public void WriteGraphToFile(string path)
+        /// <summary>
+        /// Writes the graph to a file as adjacency lists.
+        /// </summary>
+        /// <param name="path">Path to the file.</param>
+        public void WriteToFile(string path)
         {
             using var file = new StreamWriter(path);
             
-            for (int i = 0; i < CountOfVertexes; ++i)
+            for (int i = 0; i < CountOfVertices; ++i)
             {
                 string line = "";
 
-                for (int j = i + 1; j < CountOfVertexes; ++j)
+                for (int j = i + 1; j < CountOfVertices; ++j)
                 {
                     if (MatrixOfConnections[i, j])
                     {
