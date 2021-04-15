@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Task_2
 {
@@ -11,16 +12,120 @@ namespace Task_2
 
         public int CountOfVertexes { get; }
 
-        public Graph(int[,] matrixOfLengths, bool[,] matrixOfConnetions)
+        public Graph(int[,] matrixOfLengths, bool[,] matrixOfConnections)
         {
-            if (matrixOfConnetions == null || matrixOfLengths == null || matrixOfConnetions.Length != matrixOfLengths.Length ||
-                matrixOfConnetions.GetLength(0) != matrixOfConnetions.GetLength(1) || matrixOfLengths.GetLength(0) != matrixOfLengths.GetLength(1))
+            if (matrixOfConnections == null || matrixOfLengths == null || matrixOfConnections.Length != matrixOfLengths.Length ||
+                matrixOfConnections.GetLength(0) != matrixOfConnections.GetLength(1) || matrixOfLengths.GetLength(0) != matrixOfLengths.GetLength(1))
             {
                 throw new ArgumentException();
             }
             MatrixOfLengths = matrixOfLengths;
-            MatrixOfConnections = matrixOfConnetions;
+            MatrixOfConnections = matrixOfConnections;
             CountOfVertexes = matrixOfLengths.GetLength(0);
+        }
+
+        public Graph(string path)
+        {
+            (int[,] matrixOfLengths, bool[,] matrixOfConnections) = ReadGraphFromFile(path);
+
+            if (matrixOfConnections == null || matrixOfLengths == null)
+            {
+                throw new ArgumentException();
+            }
+
+            MatrixOfLengths = matrixOfLengths;
+            MatrixOfConnections = matrixOfConnections;
+            CountOfVertexes = matrixOfLengths.GetLength(0);
+        }
+
+        private static int[][] GetGraphInfo(string path)
+        {
+            if (!File.Exists(path))
+            {
+                throw new ArgumentException();
+            }
+            var lines = File.ReadAllLines(path);
+
+            char[] separationSymbols = { ' ', ':', ',', '(', ')' };
+            var arraysOfNumbers = new string[lines.Length][];
+            var graphInfo = new int[lines.Length][];
+
+            for (int i = 0; i < lines.Length; ++i)
+            {
+                arraysOfNumbers[i] = lines[i].Split(separationSymbols, StringSplitOptions.RemoveEmptyEntries);
+                graphInfo[i] = new int[arraysOfNumbers[i].Length];
+
+                for (int j = 0; j < arraysOfNumbers[i].Length; ++j)
+                {
+                    if (int.TryParse(arraysOfNumbers[i][j], out int value))
+                    {
+                        graphInfo[i][j] = value;
+                    }
+                    else
+                    {
+                        throw new ArgumentException();
+                    }
+                }
+            }
+
+            return graphInfo;
+        }
+
+        private static int GetCountOfVertexes(int[][] graphInfo)
+        {
+            int maximumNumber = 0;
+            for (int i = 0; i < graphInfo.GetLength(0); ++i)
+            {
+                if (graphInfo[i][0] > maximumNumber)
+                {
+                    maximumNumber = graphInfo[i][0];
+                }
+                for (int j = 1; j < graphInfo[i].Length; j += 2)
+                {
+                    if (graphInfo[i][j] > maximumNumber)
+                    {
+                        maximumNumber = graphInfo[i][j];
+                    }
+                }
+            }
+
+            if (maximumNumber == 0)
+            {
+                throw new ArgumentException();
+            }
+
+            return maximumNumber;
+        }
+        private static (int[,], bool[,]) ReadGraphFromFile(string path)
+        {
+            var graphInfo = GetGraphInfo(path);
+            var countOfVertexes = GetCountOfVertexes(graphInfo);
+            var matrixOfLengths = new int[countOfVertexes, countOfVertexes];
+            var matrixOfConnections = new bool[countOfVertexes, countOfVertexes];
+
+            for (int i = 0; i < countOfVertexes; ++i)
+            {
+                matrixOfConnections[i, i] = true;
+            }
+
+            for (int i = 0; i < graphInfo.GetLength(0); ++i)
+            {
+                for (int j = 1; j < graphInfo[i].Length - 1; j += 2)
+                {
+                    if (graphInfo[i][0] <= 0 || graphInfo[i][0] > countOfVertexes ||
+                        graphInfo[i][j] <= 0 || graphInfo[i][j] > countOfVertexes)
+                    {
+                        throw new ArgumentException();
+                    }
+
+                        matrixOfConnections[graphInfo[i][0] - 1, graphInfo[i][j] - 1] = true;
+                    matrixOfConnections[graphInfo[i][j] - 1, graphInfo[i][0] - 1] = true;
+                    matrixOfLengths[graphInfo[i][0] - 1, graphInfo[i][j] - 1] = graphInfo[i][j + 1];
+                    matrixOfLengths[graphInfo[i][j] - 1, graphInfo[i][0] - 1] = graphInfo[i][j + 1];
+                }
+            }
+
+            return (matrixOfLengths, matrixOfConnections);
         }
 
         private void DFS(int numberOfVertex, bool[] visited)
@@ -92,7 +197,7 @@ namespace Task_2
                 Edge maxEdge = null;
                 foreach (var edge in edges)
                 {
-                    if ((!visited[edge.FirstVertex] || !visited[edge.SecondVertex]) && (maxEdge == null ||edge.Weight < maxEdge.Weight))
+                    if ((!visited[edge.FirstVertex] || !visited[edge.SecondVertex]) && (maxEdge == null || edge.Weight > maxEdge.Weight))
                     {
                         maxEdge = edge;
                     }
@@ -113,6 +218,31 @@ namespace Task_2
             }
 
             return new Graph(newLengths, newConnections);
+        }
+
+        public void WriteGraphToFile(string path)
+        {
+            using var file = new StreamWriter(path);
+            
+            for (int i = 0; i < CountOfVertexes; ++i)
+            {
+                string line = "";
+
+                for (int j = i + 1; j < CountOfVertexes; ++j)
+                {
+                    if (MatrixOfConnections[i, j])
+                    {
+                        line += $" {j + 1} ({MatrixOfLengths[i, j]}),";
+                    }
+                }
+
+                if (line != "")
+                {
+                    line = line.Remove(line.Length - 1);
+                    line = $"{i + 1}:" + line;
+                    file.WriteLine(line);
+                }
+            }
         }
     }
 }

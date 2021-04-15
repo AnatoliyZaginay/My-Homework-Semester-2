@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Task_2
 {
@@ -20,6 +21,13 @@ namespace Task_2
             var graph = new Graph(lengths, connections);
             var tree = graph.GetSpanningTree();
             bool a = graph.IsConnected();
+
+            string path = "C:\\Users\\User\\Desktop\\r.txt";
+            string res = "C:\\Users\\User\\Desktop\\res.txt";
+
+            var graphA = new Graph(path);
+            var treeA = graphA.GetSpanningTree();
+            treeA.WriteGraphToFile(res);
         }
     }
 }
