@@ -5,20 +5,28 @@ namespace Task_2
 {
     public class Game
     {
-        private int widght;
+        public int Widght { get; private set; }
 
-        private int height;
+        public int Height { get; private set; }
 
-        private bool[,] map;
+        public bool[,] BoolMap { get; private set; }
 
-        private (int x, int y) playerPosition;
-        
-        public Game(string filePath)
+        public string[] Map { get; private set; }
+
+        public (int x, int y) PlayerPosition { get; private set; }
+
+        private Action<string> Write;
+
+        private Action<int, int> SetCursor;
+
+        public Game(string filePath, Action<string> WriteFunction, Action<int, int> SetCursorFunction)
         {
+            Write = WriteFunction;
+            SetCursor = SetCursorFunction;
             Initialize(filePath);
         }
 
-        private int findMaximumLength(string[] lines)
+        private int FindMaximumLength(string[] lines)
         {
             int maximumLength = 0;
             for (int i = 0; i < lines.Length; ++i)
@@ -32,60 +40,84 @@ namespace Task_2
             return maximumLength;
         }
 
+        public void DrawMap()
+        {
+            for (int i = 0; i < Map.Length; ++i)
+            {
+                SetCursor(0, i);
+                Write(Map[i]);
+            }
+        }
+
         private void Initialize(string filePath)
         {
-            string[] lines = File.ReadAllLines(filePath);
-            widght = findMaximumLength(lines);
-            height = lines.Length;
-
-            if (widght == 0 || height == 0)
+            if (!File.Exists(filePath))
             {
-                throw new ArgumentException();
+                throw new ArgumentException("File does not exists");
             }
 
-            map = new bool[height, widght];
+            Map = File.ReadAllLines(filePath);
+            Widght = FindMaximumLength(Map);
+            Height = Map.Length;
 
-            for (int i = 0; i < height; ++i)
+            if (Widght == 0 || Height == 0)
             {
-                Console.WriteLine(lines[i]);
-                for (int j = 0; j < lines[i].Length; ++j)
+                throw new ArgumentException("Invalid map size");
+            }
+
+            BoolMap = new bool[Height, Widght];
+            bool isPlayerOnMap = false;
+
+            for (int i = 0; i < Height; ++i)
+            {
+                for (int j = 0; j < Map[i].Length; ++j)
                 {
-                    if (lines[i][j] == '@')
+                    if (Map[i][j] == '@')
                     {
-                        playerPosition.y = i;
-                        playerPosition.x = j;
+                        if (isPlayerOnMap)
+                        {
+                            throw new ArgumentException("More than one player on map");
+                        }
+
+                        isPlayerOnMap = true;
+
+                        PlayerPosition = (j, i);
                         continue;
                     }
 
-                    if (lines[i][j] == '#')
+                    if (Map[i][j] == '#')
                     {
-                        map[i, j] = true;
+                        BoolMap[i, j] = true;
                     }
                 }
+            }
+
+            if (!isPlayerOnMap)
+            {
+                throw new ArgumentException("Player is not on map");
             }
         }
 
         private bool IsFree(int x, int y)
-            => map[y, x];
+            => BoolMap[y, x];
 
         private void RedrawPlayer(int newX, int newY)
         {
-            Console.SetCursorPosition(playerPosition.x, playerPosition.y);
-            Console.Write(' ');
-            Console.SetCursorPosition(newX, newY);
-            Console.Write('@');
+            SetCursor(PlayerPosition.x, PlayerPosition.y);
+            Write(" ");
+            SetCursor(newX, newY);
+            Write("@");
         }
 
         private void MovePlayer(int deltaX, int deltaY)
         {
-            int newX = (playerPosition.x + deltaX + widght) % widght;
-            int newY = (playerPosition.y + deltaY + height) % height;
+            int newX = (PlayerPosition.x + deltaX + Widght) % Widght;
+            int newY = (PlayerPosition.y + deltaY + Height) % Height;
 
             if (!IsFree(newX, newY))
             {
                 RedrawPlayer(newX, newY);
-                playerPosition.x = newX;
-                playerPosition.y = newY;
+                PlayerPosition = (newX, newY);
             }
         }
 
