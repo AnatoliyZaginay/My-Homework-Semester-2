@@ -3,22 +3,52 @@ using System.IO;
 
 namespace Task_2
 {
+    /// <summary>
+    /// Class of simple game.
+    /// </summary>
     public class Game
     {
+        /// <summary>
+        /// Widght of the game map.
+        /// </summary>
         public int Widght { get; private set; }
 
+        /// <summary>
+        /// Height of the game map.
+        /// </summary>
         public int Height { get; private set; }
 
+        /// <summary>
+        /// Boolean representation of the game map.
+        /// </summary>
         public bool[,] BoolMap { get; private set; }
 
+        /// <summary>
+        /// String representation of the game map.
+        /// </summary>
         public string[] Map { get; private set; }
 
+        /// <summary>
+        /// Player position on the game map.
+        /// </summary>
         public (int x, int y) PlayerPosition { get; private set; }
 
+        /// <summary>
+        /// Function of drawing game objects.
+        /// </summary>
         private Action<string> Write;
 
+        /// <summary>
+        /// Cursor setting function.
+        /// </summary>
         private Action<int, int> SetCursor;
 
+        /// <summary>
+        /// Creates a new game by the game map file, the specified writing function and the specified cursor setting function.
+        /// </summary>
+        /// <param name="filePath">Path to the game map file.</param>
+        /// <param name="WriteFunction">Specified writing function.</param>
+        /// <param name="SetCursorFunction">Specified cursor setting function.</param>
         public Game(string filePath, Action<string> WriteFunction, Action<int, int> SetCursorFunction)
         {
             Write = WriteFunction;
@@ -40,6 +70,9 @@ namespace Task_2
             return maximumLength;
         }
 
+        /// <summary>
+        /// Draws game map.
+        /// </summary>
         public void DrawMap()
         {
             for (int i = 0; i < Map.Length; ++i)
@@ -121,15 +154,27 @@ namespace Task_2
             }
         }
 
+        /// <summary>
+        /// Moves the player to the left if possible.
+        /// </summary>
         public void OnLeft(object sender, EventArgs args)
             => MovePlayer(-1, 0);
 
+        /// <summary>
+        /// Moves the player to the right if possible.
+        /// </summary>
         public void OnRight(object sender, EventArgs args)
             => MovePlayer(1, 0);
 
+        /// <summary>
+        /// Moves the player up if possible.
+        /// </summary>
         public void OnUp(object sender, EventArgs args)
             => MovePlayer(0, -1);
 
+        /// <summary>
+        /// Moves the player down if possible.
+        /// </summary>
         public void OnDown(object sender, EventArgs args)
             => MovePlayer(0, 1);
     }

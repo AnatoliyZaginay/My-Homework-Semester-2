@@ -6,6 +6,8 @@ namespace Task_2
     {
         static void Main(string[] args)
         {
+            Console.CursorVisible = false;
+
             var game = new Game("..//..//..//Map.txt", Console.Write, Console.SetCursorPosition);
 
             var eventLoop = new EventLoop();
