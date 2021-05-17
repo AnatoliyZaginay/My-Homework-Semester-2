@@ -28,7 +28,7 @@ namespace Task_2
         /// <param name="index">Specified index.</param>
         public override void ChangeValue(int newValue, int index)
         {
-            if (Contains(newValue))
+            if (Contains(newValue) && GetValue(index) != newValue)
             {
                 throw new ElementAlreadyExistsException();
             }

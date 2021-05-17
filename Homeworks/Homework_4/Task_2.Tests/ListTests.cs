@@ -1,28 +1,21 @@
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace Task_2.Tests
 {
     [TestFixture]
     public class ListTests
     {
-        private List list;
-
-        [SetUp]
-        public void Setup()
-        {
-            list = new List();
-        }
-
-        [Test]
-        public void ListShouldContainOnlyAddedValues()
+        [TestCaseSource(nameof(ListTypes))]
+        public void ListShouldContainOnlyAddedValues(List list)
         {
             list.Add(0, 0);
             Assert.IsTrue(list.Contains(0));
             Assert.IsFalse(list.Contains(1));
         }
 
-        [Test]
-        public void GetValueShouldReturnValuesCorrectly()
+        [TestCaseSource(nameof(ListTypes))]
+        public void GetValueShouldReturnValuesCorrectly(List list)
         {
             list.Add(0, 0);
             list.Add(1, 1);
@@ -31,16 +24,16 @@ namespace Task_2.Tests
             Assert.AreEqual(1, list.GetValue(1));
         }
 
-        [Test]
-        public void GetValueShouldThrowExceptionIfIndexIsNotCorrect()
+        [TestCaseSource(nameof(ListTypes))]
+        public void GetValueShouldThrowExceptionIfIndexIsNotCorrect(List list)
         {
             list.Add(0, 0);
             Assert.Throws<ElementDoesNotExistException>(() => list.GetValue(1));
             Assert.Throws<ElementDoesNotExistException>(() => list.GetValue(-1));
         }
 
-        [Test]
-        public void ListShouldAddValuesCorrectly()
+        [TestCaseSource(nameof(ListTypes))]
+        public void ListShouldAddValuesCorrectly(List list)
         {
             list.Add(1, 0);
             list.Add(4, 1);
@@ -54,16 +47,16 @@ namespace Task_2.Tests
             }
         }
 
-        [Test]
-        public void AddShouldThrowExceptionIfIndexIsNotCorrect()
+        [TestCaseSource(nameof(ListTypes))]
+        public void AddShouldThrowExceptionIfIndexIsNotCorrect(List list)
         {
             list.Add(0, 0);
             Assert.Throws<System.IndexOutOfRangeException>(() => list.Add(1, 2));
             Assert.Throws<System.IndexOutOfRangeException>(() => list.Add(1, -1));
         }
 
-        [Test]
-        public void ListShouldChangeValuesCorrectly()
+        [TestCaseSource(nameof(ListTypes))]
+        public void ListShouldChangeValuesCorrectly(List list)
         {
             list.Add(2, 0);
             list.Add(1, 0);
@@ -76,16 +69,16 @@ namespace Task_2.Tests
             }
         }
 
-        [Test]
-        public void ChangeValueShouldThrowExceptionIfIndexIsNotCorrect()
+        [TestCaseSource(nameof(ListTypes))]
+        public void ChangeValueShouldThrowExceptionIfIndexIsNotCorrect(List list)
         {
             list.Add(0, 0);
             Assert.Throws<ElementDoesNotExistException>(() => list.ChangeValue(1, 2));
             Assert.Throws<ElementDoesNotExistException>(() => list.ChangeValue(1, -1));
         }
 
-        [Test]
-        public void ListShouldDeleteElementsCorrectly()
+        [TestCaseSource(nameof(ListTypes))]
+        public void ListShouldDeleteElementsCorrectly(List list)
         {
             list.Add(10, 0);
             list.Add(0, 1);
@@ -108,12 +101,18 @@ namespace Task_2.Tests
             }
         }
 
-        [Test]
-        public void DeleteShouldThrowExceptionIfIndexIsNotCorrect()
+        [TestCaseSource(nameof(ListTypes))]
+        public void DeleteShouldThrowExceptionIfIndexIsNotCorrect(List list)
         {
             list.Add(0, 0);
             Assert.Throws<ElementDoesNotExistException>(() => list.Delete(1));
             Assert.Throws<ElementDoesNotExistException>(() => list.Delete(-1));
+        }
+
+        private static IEnumerable<List> ListTypes()
+        {
+            yield return new List();
+            yield return new UniqueList();
         }
     }
 }

@@ -22,6 +22,6 @@ namespace Task_2.Tests
 
         [Test]
         public void ChangeValueShouldThrowExceptionIfListAlreadyContainsValue()
-            => Assert.Throws<ElementAlreadyExistsException>(() => list.ChangeValue(1, 1));
+            => Assert.Throws<ElementAlreadyExistsException>(() => list.ChangeValue(1, 2));
     }
 }

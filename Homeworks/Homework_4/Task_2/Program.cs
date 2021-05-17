@@ -4,7 +4,7 @@ namespace Task_2
 {
     class Program
     {
-        static void Commands()
+          private static void Commands()
         {
             Console.WriteLine("\nCommands:");
             Console.WriteLine("0 - exit");

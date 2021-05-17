@@ -10,7 +10,7 @@ namespace Task_2
         /// <summary>
         /// List element class that has a value and a reference to the next element.
         /// </summary>
-        protected class ListElement
+        private class ListElement
         {
             public int Value { get; set; }
 
@@ -25,12 +25,18 @@ namespace Task_2
         /// <summary>
         /// Pointer to the head of the list.
         /// </summary>
-        protected ListElement head;
+        private ListElement head;
 
         /// <summary>
         /// Number of elements in the list.
         /// </summary>
-        protected int length;
+        private int length;
+
+        private void MovePointersToListElements(ref ListElement firstPointer, ref ListElement secondPointer)
+        {
+            firstPointer = secondPointer;
+            secondPointer = secondPointer.Next;
+        }
 
         /// <summary>
         /// Adds a value to the list by index.
@@ -44,14 +50,13 @@ namespace Task_2
                 throw new IndexOutOfRangeException();
             }
 
-            ListElement newElement = new ListElement(value);
-            ListElement currentElement = head;
+            var newElement = new ListElement(value);
+            var currentElement = head;
             ListElement previousElement = null;
 
             for (int i = 0; i < index; ++i)
             {
-                previousElement = currentElement;
-                currentElement = currentElement.Next;
+                MovePointersToListElements(ref previousElement, ref currentElement);
             }
             ++length;
 
@@ -78,7 +83,7 @@ namespace Task_2
                 throw new ElementDoesNotExistException();
             }
 
-            ListElement currentElement = head;
+            var currentElement = head;
 
             for (int i = 0; i < index; ++i)
             {
@@ -99,13 +104,12 @@ namespace Task_2
                 throw new ElementDoesNotExistException();
             }
 
-            ListElement currentElement = head;
+            var currentElement = head;
             ListElement previousElement = null;
 
             for (int i = 0; i < index; ++i)
             {
-                previousElement = currentElement;
-                currentElement = currentElement.Next;
+                MovePointersToListElements(ref previousElement, ref currentElement);
             }
             --length;
 
@@ -129,7 +133,7 @@ namespace Task_2
                 throw new ElementDoesNotExistException();
             }
 
-            ListElement currentElement = head;
+            var currentElement = head;
 
             for (int i = 0; i < index; ++i)
             {
@@ -142,10 +146,10 @@ namespace Task_2
         /// <summary>
         /// Returns true if the list contains the value otherwise returns false.
         /// </summary>
-        /// <param name="value">Specified index.</param>
+        /// <param name="value">Specified value.</param>
         public bool Contains(int value)
         {
-            ListElement currentElement = head;
+            var currentElement = head;
             for (int i = 0; i < length; ++i)
             {
                 if (currentElement.Value == value)
