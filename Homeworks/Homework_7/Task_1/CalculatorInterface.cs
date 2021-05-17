@@ -3,10 +3,19 @@ using System.Windows.Forms;
 
 namespace Task_1
 {
+    /// <summary>
+    /// Calculator GUI class.
+    /// </summary>
     public partial class CalculatorInterface : Form
     {
+        /// <summary>
+        /// Calculator used for calculations.
+        /// </summary>
         private Calculator calculator;
 
+        /// <summary>
+        /// Creates new Calculator Interface.
+        /// </summary>
         public CalculatorInterface()
         {
             InitializeComponent();

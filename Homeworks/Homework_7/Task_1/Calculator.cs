@@ -2,16 +2,34 @@
 
 namespace Task_1
 {
+    /// <summary>
+    /// Calculator class.
+    /// </summary>
     public class Calculator
     {
+        /// <summary>
+        /// First number of expression.
+        /// </summary>
         public decimal FirstNumber { get; private set; }
 
+        /// <summary>
+        /// Second number of expression.
+        /// </summary>
         public decimal SecondNumber { get; private set; }
 
+        /// <summary>
+        /// Expression operation.
+        /// </summary>
         public string Operation { get; private set; }
 
+        /// <summary>
+        /// Current value to show.
+        /// </summary>
         public string CurrentValue { get; private set; }
 
+        /// <summary>
+        /// States of calculator work.
+        /// </summary>
         public enum State
         {
             FirstNumber,
@@ -20,12 +38,24 @@ namespace Task_1
             Equality
         }
 
+        /// <summary>
+        /// Current state of calculator work.
+        /// </summary>
         private State currentState;
 
+        /// <summary>
+        /// Coefficient by which a number is multiplied when a new digit is added.
+        /// </summary>
         private decimal numberCoefficient;
 
+        /// <summary>
+        /// Сoefficient by which the digit is multiplied.
+        /// </summary>
         private decimal digitCoefficient;
 
+        /// <summary>
+        /// Creates a new calculator.
+        /// </summary>
         public Calculator()
         {
             FirstNumber = 0m;
@@ -276,6 +306,10 @@ namespace Task_1
             currentState = State.FirstNumber;
         }
 
+        /// <summary>
+        /// Adds a new element to the current state of the calculator.
+        /// </summary>
+        /// <param name="line">New element.</param>
         public void AddElement(string line)
         {
             if (int.TryParse(line, out int digit))
