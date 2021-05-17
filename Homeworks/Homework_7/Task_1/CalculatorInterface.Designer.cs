@@ -50,8 +50,8 @@ namespace Task_1
             this.number0 = new System.Windows.Forms.Button();
             this.buttonEqual = new System.Windows.Forms.Button();
             this.buttonDivision = new System.Windows.Forms.Button();
-            this.resultOutput = new System.Windows.Forms.Label();
-            this.expression = new System.Windows.Forms.Label();
+            this.expressionLabel = new System.Windows.Forms.Label();
+            this.resultLabel = new System.Windows.Forms.Label();
             this.tableLayoutPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -83,8 +83,8 @@ namespace Task_1
             this.tableLayoutPanel.Controls.Add(this.number0, 1, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonEqual, 3, 6);
             this.tableLayoutPanel.Controls.Add(this.buttonDivision, 3, 5);
-            this.tableLayoutPanel.Controls.Add(this.resultOutput, 0, 0);
-            this.tableLayoutPanel.Controls.Add(this.expression, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.expressionLabel, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.resultLabel, 0, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel.Name = "tableLayoutPanel";
@@ -439,33 +439,31 @@ namespace Task_1
             this.buttonDivision.MouseLeave += new System.EventHandler(this.ButtonMouseLeave);
             this.buttonDivision.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ButtonMouseUp);
             // 
-            // resultOutput
+            // expressionLabel
             // 
-            this.resultOutput.AutoSize = true;
-            this.tableLayoutPanel.SetColumnSpan(this.resultOutput, 4);
-            this.resultOutput.Cursor = System.Windows.Forms.Cursors.Default;
-            this.resultOutput.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.resultOutput.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.resultOutput.Location = new System.Drawing.Point(3, 0);
-            this.resultOutput.Name = "resultOutput";
-            this.resultOutput.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.resultOutput.Size = new System.Drawing.Size(376, 75);
-            this.resultOutput.TabIndex = 16;
-            this.resultOutput.Text = "0";
-            this.resultOutput.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.expressionLabel.AutoSize = true;
+            this.tableLayoutPanel.SetColumnSpan(this.expressionLabel, 4);
+            this.expressionLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.expressionLabel.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.expressionLabel.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.expressionLabel.Location = new System.Drawing.Point(3, 75);
+            this.expressionLabel.Name = "expressionLabel";
+            this.expressionLabel.Size = new System.Drawing.Size(376, 31);
+            this.expressionLabel.TabIndex = 21;
+            this.expressionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // expression
+            // resultLabel
             // 
-            this.expression.AutoSize = true;
-            this.tableLayoutPanel.SetColumnSpan(this.expression, 4);
-            this.expression.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.expression.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.expression.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.expression.Location = new System.Drawing.Point(3, 75);
-            this.expression.Name = "expression";
-            this.expression.Size = new System.Drawing.Size(376, 31);
-            this.expression.TabIndex = 21;
-            this.expression.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.resultLabel.AutoSize = true;
+            this.tableLayoutPanel.SetColumnSpan(this.resultLabel, 4);
+            this.resultLabel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.resultLabel.Font = new System.Drawing.Font("Segoe UI", 28F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.resultLabel.Location = new System.Drawing.Point(3, 0);
+            this.resultLabel.Name = "resultLabel";
+            this.resultLabel.Size = new System.Drawing.Size(376, 75);
+            this.resultLabel.TabIndex = 22;
+            this.resultLabel.Text = "0";
+            this.resultLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // CalculatorInterface
             // 
@@ -503,12 +501,12 @@ namespace Task_1
         private System.Windows.Forms.Button number0;
         private System.Windows.Forms.Button buttonEqual;
         private System.Windows.Forms.Button buttonDivision;
-        private System.Windows.Forms.Label resultOutput;
         private System.Windows.Forms.Button buttonComma;
         private System.Windows.Forms.Button buttonPlusMinus;
         private System.Windows.Forms.Button buttonBackspace;
         private System.Windows.Forms.Button buttonClearEntry;
-        private System.Windows.Forms.Label expression;
+        private System.Windows.Forms.Label expressionLabel;
+        private System.Windows.Forms.Label result;
+        private System.Windows.Forms.Label resultLabel;
     }
 }
-

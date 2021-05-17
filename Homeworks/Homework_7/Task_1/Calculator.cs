@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace Task_1
 {
@@ -40,23 +39,38 @@ namespace Task_1
         private bool IsOperation(string line)
             => line == "+" || line == "-" || line == "*" || line == "/";
 
+        private void TryAddDigit(bool toFirstNumber, int digit)
+        {
+            decimal newNumber = toFirstNumber ? FirstNumber : SecondNumber;
+            try
+            {
+                newNumber = newNumber * numberCoefficient + digit * digitCoefficient;
+                CurrentValue = newNumber.ToString();
+                digitCoefficient = digitCoefficient < 1 ? digitCoefficient * 0.1m : 1;
+
+                if (toFirstNumber)
+                {
+                    FirstNumber = newNumber;
+                }
+                else
+                {
+                    SecondNumber = newNumber;
+                }
+            }
+            catch (OverflowException)
+            {
+                CurrentValue = "Value overflow";
+                currentState = State.FirstNumber;
+                FirstNumber = 0m;
+            }
+        }
+
         private void AddDigit(int digit)
         {
             switch (currentState)
             {
                 case State.FirstNumber:
-                    try
-                    {
-                        FirstNumber = FirstNumber * numberCoefficient + digit * digitCoefficient;
-                        CurrentValue = FirstNumber.ToString();
-                        digitCoefficient = digitCoefficient < 1 ? digitCoefficient * 0.1m : 1;
-                    }
-                    catch (OverflowException)
-                    {
-                        CurrentValue = "Value overflow";
-                        currentState = State.FirstNumber;
-                        FirstNumber = 0m;
-                    }
+                    TryAddDigit(true, digit);
                     break;
                 case State.Operation:
                     currentState = State.SecondNumber;
@@ -64,18 +78,7 @@ namespace Task_1
                     CurrentValue = SecondNumber.ToString();
                     break;
                 case State.SecondNumber:
-                    try
-                    {
-                        SecondNumber = SecondNumber * numberCoefficient + digit * digitCoefficient;
-                        CurrentValue = SecondNumber.ToString();
-                        digitCoefficient = digitCoefficient < 1 ? digitCoefficient * 0.1m : 1;
-                    }
-                    catch (OverflowException)
-                    {
-                        CurrentValue = "Value overflow";
-                        currentState = State.FirstNumber;
-                        FirstNumber = 0m;
-                    }
+                    TryAddDigit(false, digit);
                     break;
                 case State.Equality:
                     currentState = State.FirstNumber;
@@ -190,18 +193,32 @@ namespace Task_1
                 case State.Operation:
                     currentState = State.SecondNumber;
                     SecondNumber = 0m;
-                    CurrentValue = $"{SecondNumber}";
+                    CurrentValue = SecondNumber.ToString();
                     numberCoefficient = 1m;
                     digitCoefficient = 0.1m;
                     break;
                 case State.Equality:
                     currentState = State.FirstNumber;
                     FirstNumber = 0m;
-                    CurrentValue = $"{FirstNumber}";
+                    CurrentValue = FirstNumber.ToString();
                     numberCoefficient = 1;
                     digitCoefficient = digitCoefficient == 1 ? 0.1m : digitCoefficient;
                     break;
             }
+        }
+
+        private void ChangeCoefficients()
+        {
+            if (digitCoefficient < 1)
+            {
+                digitCoefficient *= 10m;
+                if (digitCoefficient <= 1)
+                {
+                    string helpLine = digitCoefficient.ToString();
+                    digitCoefficient = Convert.ToDecimal(helpLine.Remove(helpLine.Length - 1));
+                }
+            }
+            numberCoefficient = digitCoefficient == 1 ? 10m : 1m;
         }
 
         private void RemoveLastDigit()
@@ -210,31 +227,15 @@ namespace Task_1
             {
                 case State.FirstNumber:
                     CurrentValue = CurrentValue.Length > 1 ?  CurrentValue.Remove(CurrentValue.Length - 1) : "0";
+                    CurrentValue = CurrentValue == "-" ? "0" : CurrentValue;
                     FirstNumber = Convert.ToDecimal(CurrentValue);
-                    if (digitCoefficient < 1)
-                    {
-                        digitCoefficient *= 10m;
-                        if (digitCoefficient <= 1)
-                        {
-                            string helpLine = digitCoefficient.ToString();
-                            digitCoefficient = Convert.ToDecimal(helpLine.Remove(helpLine.Length - 1));
-                        }
-                    }
-                    numberCoefficient = digitCoefficient == 1 ? 10m : numberCoefficient;
+                    ChangeCoefficients();
                     break;
                 case State.SecondNumber:
                     CurrentValue = CurrentValue.Length > 1 ? CurrentValue.Remove(CurrentValue.Length - 1) : "0";
+                    CurrentValue = CurrentValue == "-" ? "0" : CurrentValue;
                     SecondNumber = Convert.ToDecimal(CurrentValue);
-                    if (digitCoefficient < 1)
-                    {
-                        digitCoefficient *= 10m;
-                        if (digitCoefficient <= 1)
-                        {
-                            string helpLine = digitCoefficient.ToString();
-                            digitCoefficient = Convert.ToDecimal(helpLine.Remove(helpLine.Length - 1));
-                        }
-                    }
-                    numberCoefficient = digitCoefficient == 1 ? 10m : numberCoefficient;
+                    ChangeCoefficients();
                     break;
             }
 
@@ -289,34 +290,27 @@ namespace Task_1
                 return;
             }
 
-            if (line == "=")
+            switch (line)
             {
-                AddEquality();
-            }
-
-            if (line == "±")
-            {
-                AddPlusMinus();
-            }
-
-            if (line == ",")
-            {
-                AddDecimal();
-            }
-
-            if (line == "C")
-            {
-                Clear();
-            }
-
-            if (line == "⌫")
-            {
-                RemoveLastDigit();
-            }
-
-            if (line == "CE")
-            {
-                ClearEntry();
+                case "=":
+                    AddEquality();
+                    break;
+                case "±":
+                    AddPlusMinus();
+                    break;
+                case ",":
+                case ".":
+                    AddDecimal();
+                    break;
+                case "⌫":
+                    RemoveLastDigit();
+                    break;
+                case "CE":
+                    ClearEntry();
+                    break;
+                case "C":
+                    Clear();
+                    break;
             }
         }
     }

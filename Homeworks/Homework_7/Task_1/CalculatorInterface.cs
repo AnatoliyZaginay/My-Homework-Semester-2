@@ -1,32 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Task_1
 {
     public partial class CalculatorInterface : Form
     {
-        public Calculator calculator { get; set; } = new();
+        private Calculator calculator;
 
         public CalculatorInterface()
         {
             InitializeComponent();
-            //resultOutput.DataBindings.Add("Text", this, "calculator.CurrentValue");
+            calculator = new();
         }
 
         private void OnButtonClick(object sender, EventArgs e)
         {
             calculator.AddElement((sender as Button).Text);
-            resultOutput.Text = calculator.CurrentValue;
+            resultLabel.Text = calculator.CurrentValue;
             if (calculator.Operation != null)
             {
-                expression.Text = $"{calculator.FirstNumber:G29} {calculator.Operation} {calculator.SecondNumber:G29}";
+                expressionLabel.Text = $"{calculator.FirstNumber:G29} {calculator.Operation} {calculator.SecondNumber:G29}";
+            }
+            else
+            {
+                expressionLabel.Text = "";
             }
         }
 
