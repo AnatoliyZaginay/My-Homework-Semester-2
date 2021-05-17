@@ -11,7 +11,7 @@ namespace Task_2
         /// <summary>
         /// Widght of the game map.
         /// </summary>
-        public int Widght { get; private set; }
+        public int Width { get; private set; }
 
         /// <summary>
         /// Height of the game map.
@@ -36,23 +36,23 @@ namespace Task_2
         /// <summary>
         /// Function of drawing game objects.
         /// </summary>
-        private Action<string> Write;
+        private Action<string> write;
 
         /// <summary>
         /// Cursor setting function.
         /// </summary>
-        private Action<int, int> SetCursor;
+        private Action<int, int> setCursor;
 
         /// <summary>
         /// Creates a new game by the game map file, the specified writing function and the specified cursor setting function.
         /// </summary>
         /// <param name="filePath">Path to the game map file.</param>
-        /// <param name="WriteFunction">Specified writing function.</param>
-        /// <param name="SetCursorFunction">Specified cursor setting function.</param>
-        public Game(string filePath, Action<string> WriteFunction, Action<int, int> SetCursorFunction)
+        /// <param name="writeFunction">Specified writing function.</param>
+        /// <param name="setCursorFunction">Specified cursor setting function.</param>
+        public Game(string filePath, Action<string> writeFunction, Action<int, int> setCursorFunction)
         {
-            Write = WriteFunction;
-            SetCursor = SetCursorFunction;
+            write = writeFunction;
+            setCursor = setCursorFunction;
             Initialize(filePath);
         }
 
@@ -77,8 +77,8 @@ namespace Task_2
         {
             for (int i = 0; i < Map.Length; ++i)
             {
-                SetCursor(0, i);
-                Write(Map[i]);
+                setCursor(0, i);
+                write(Map[i]);
             }
         }
 
@@ -90,15 +90,15 @@ namespace Task_2
             }
 
             Map = File.ReadAllLines(filePath);
-            Widght = FindMaximumLength(Map);
+            Width = FindMaximumLength(Map);
             Height = Map.Length;
 
-            if (Widght == 0 || Height == 0)
+            if (Width == 0 || Height == 0)
             {
                 throw new ArgumentException("Invalid map size");
             }
 
-            BoolMap = new bool[Height, Widght];
+            BoolMap = new bool[Height, Width];
             bool isPlayerOnMap = false;
 
             for (int i = 0; i < Height; ++i)
@@ -132,22 +132,22 @@ namespace Task_2
         }
 
         private bool IsFree(int x, int y)
-            => BoolMap[y, x];
+            => !BoolMap[y, x];
 
         private void RedrawPlayer(int newX, int newY)
         {
-            SetCursor(PlayerPosition.x, PlayerPosition.y);
-            Write(" ");
-            SetCursor(newX, newY);
-            Write("@");
+            setCursor(PlayerPosition.x, PlayerPosition.y);
+            write(" ");
+            setCursor(newX, newY);
+            write("@");
         }
 
         private void MovePlayer(int deltaX, int deltaY)
         {
-            int newX = (PlayerPosition.x + deltaX + Widght) % Widght;
+            int newX = (PlayerPosition.x + deltaX + Width) % Width;
             int newY = (PlayerPosition.y + deltaY + Height) % Height;
 
-            if (!IsFree(newX, newY))
+            if (IsFree(newX, newY))
             {
                 RedrawPlayer(newX, newY);
                 PlayerPosition = (newX, newY);

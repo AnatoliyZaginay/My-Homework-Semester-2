@@ -19,7 +19,7 @@ namespace Task_2.Tests
         [SetUp]
         public void Setup()
         {
-            game = new Game("..//..//..//TestMap.txt", new Action<string>(line => { }), new Action<int, int>((x, y) => { }));
+            game = new Game("..//..//..//TestMap.txt", line => { }, (x, y) => { });
         }
 
         [Test]
@@ -27,21 +27,20 @@ namespace Task_2.Tests
         {
             Assert.AreEqual(expectedMap, game.BoolMap);
             Assert.AreEqual((2, 2), game.PlayerPosition);
-            Assert.AreEqual(5, game.Widght);
+            Assert.AreEqual(5, game.Width);
             Assert.AreEqual(4, game.Height);
         }
 
         [TestCaseSource(nameof(FilesWithInvalidData))]
         public void GameInitializeShouldThrowExceptionIfMapIsInvalid(string filePath)
         {
-            Game invalidGame;
-            Assert.Throws<ArgumentException>(() => invalidGame = new Game(filePath, new Action<string>(line => { }), new Action<int, int>((x, y) => { })));
+            Assert.Throws<ArgumentException>(() => new Game(filePath, line => { }, (x, y) => { }));
         }
 
         [TestCaseSource(nameof(PlayerMovementDataCases))]
-        public void PlayerMovementTest(Action<Game> MoveFunction, (int, int) expectedPlayerCoordinates)
+        public void PlayerMovementTest(Action<Game> moveFunction, (int, int) expectedPlayerCoordinates)
         {
-            MoveFunction(game);
+            moveFunction(game);
             Assert.AreEqual(expectedPlayerCoordinates, game.PlayerPosition);
         }
 
