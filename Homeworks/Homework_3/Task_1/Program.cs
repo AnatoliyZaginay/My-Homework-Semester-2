@@ -4,7 +4,7 @@ namespace Task_1
 {
     class Program
     {
-        static void Commands()
+        private static void Commands()
         {
             Console.WriteLine("\nCommands:");
             Console.WriteLine("0 - Exit");
@@ -36,77 +36,85 @@ namespace Task_1
                 Commands();
                 Console.Write("Enter a number of command: ");
                 commandNumber = int.Parse(Console.ReadLine());
-                string key;
-                string value;
                 switch (commandNumber)
                 {
                     case 0:
                         break;
                     case 1:
-                        Console.Write("Enter a key: ");
-                        key = Console.ReadLine();
-                        Console.Write("Enter a value: ");
-                        value = Console.ReadLine();
-                        tree.Insert(key, value);
-                        Console.WriteLine("The key-value pair was added successfully.");
-                        break;
+                        {
+                            Console.Write("Enter a key: ");
+                            string key = Console.ReadLine();
+                            Console.Write("Enter a value: ");
+                            string value = Console.ReadLine();
+                            tree.Insert(key, value);
+                            Console.WriteLine("The key-value pair was added successfully.");
+                            break;
+                        }
                     case 2:
-                        Console.Write("Enter a key: ");
-                        key = Console.ReadLine();
-                        try
                         {
-                            tree.Delete(key);
-                            Console.WriteLine("The key-value pair was deleted successfully.");
+                            Console.Write("Enter a key: ");
+                            string key = Console.ReadLine();
+                            try
+                            {
+                                tree.Delete(key);
+                                Console.WriteLine("The key-value pair was deleted successfully.");
+                            }
+                            catch (ArgumentException)
+                            {
+                                Console.WriteLine("The key isn't contained in the tree.");
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                Console.WriteLine("The tree is empty");
+                            }
+                            break;
                         }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine("The key isn't contained in the tree.");
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            Console.WriteLine("The tree is empty");
-                        }
-                        break;
                     case 3:
-                        Console.Write("Enter a key: ");
-                        key = Console.ReadLine();
-                        try
                         {
-                            value = tree.GetValue(key);
-                            Console.WriteLine($"Returned value: {value}");
+                            Console.Write("Enter a key: ");
+                            string key = Console.ReadLine();
+                            try
+                            {
+                                string value = tree.GetValue(key);
+                                Console.WriteLine($"Returned value: {value}");
+                            }
+                            catch (ArgumentException)
+                            {
+                                Console.WriteLine("The key isn't contained in the tree.");
+                            }
+                            break;
                         }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine("The key isn't contained in the tree.");
-                        }
-                        break;
                     case 4:
-                        Console.Write("Enter a key: ");
-                        key = Console.ReadLine();
-                        if (tree.Contains(key))
                         {
-                            Console.WriteLine("The key is contained in the tree.");
+                            Console.Write("Enter a key: ");
+                            string key = Console.ReadLine();
+                            if (tree.Contains(key))
+                            {
+                                Console.WriteLine("The key is contained in the tree.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("The key isn't contained in the tree.");
+                            }
+                            break;
                         }
-                        else
-                        {
-                            Console.WriteLine("The key isn't contained in the tree.");
-                        }
-                        break;
                     case 5:
-                        Console.Write("Enter a key: ");
-                        key = Console.ReadLine();
-                        Console.Write("Enter a value: ");
-                        value = Console.ReadLine();
-                        try
                         {
-                            tree.ChangeValue(key, value);
-                            Console.WriteLine("The value was changed.");
+                            Console.Write("Enter a key: ");
+                            string key = Console.ReadLine();
+                            Console.Write("Enter a value: ");
+                            string value = Console.ReadLine();
+                            try
+                            {
+                                tree.ChangeValue(key, value);
+                                Console.WriteLine("The value was changed.");
+                            }
+                            catch (ArgumentException)
+                            {
+                                Console.WriteLine("The key isn't contained in the tree.");
+                            }
+                            break;
                         }
-                        catch (ArgumentException)
-                        {
-                            Console.WriteLine("The key isn't contained in the tree.");
-                        }
-                        break;
                     default:
                         Console.WriteLine("Invalid command number.");
                         break;

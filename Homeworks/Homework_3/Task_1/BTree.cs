@@ -35,7 +35,7 @@ namespace Task_1
         {
             public (string key, string value)[] Data { get; set;  }
 
-            public Node[] Childrens { get; set; }
+            public Node[] Children { get; set; }
 
             public Node Parent { get; set; }
 
@@ -46,7 +46,7 @@ namespace Task_1
             public Node(int degree)
             {
                 Data = new (string, string)[2 * degree];
-                Childrens = new Node[2 * degree + 1];
+                Children = new Node[2 * degree + 1];
                 Count = 0;
                 IsLeaf = true;
             }
@@ -99,10 +99,10 @@ namespace Task_1
                 for (int i = Count; i > position; --i)
                 {
                     Data[i] = Data[i - 1];
-                    Childrens[i + 1] = Childrens[i];
+                    Children[i + 1] = Children[i];
                 }
                 Data[position] = (key, value);
-                Childrens[position + 1] = null;
+                Children[position + 1] = null;
                 ++Count;
                 return position;
             }
@@ -113,18 +113,18 @@ namespace Task_1
                 {
                     int currentIndex = newNode.Count;
                     newNode.Data[currentIndex] = Data[i];
-                    newNode.Childrens[currentIndex] = Childrens[i];
-                    if (newNode.Childrens[currentIndex] != null)
+                    newNode.Children[currentIndex] = Children[i];
+                    if (newNode.Children[currentIndex] != null)
                     {
-                        newNode.Childrens[currentIndex].Parent = newNode;
+                        newNode.Children[currentIndex].Parent = newNode;
                     }
                     ++newNode.Count;
                 }
 
-                newNode.Childrens[newNode.Count] = Childrens[endIndex];
-                if (newNode.Childrens[newNode.Count] != null)
+                newNode.Children[newNode.Count] = Children[endIndex];
+                if (newNode.Children[newNode.Count] != null)
                 {
-                    newNode.Childrens[newNode.Count].Parent = newNode;
+                    newNode.Children[newNode.Count].Parent = newNode;
                 }
             }
 
@@ -185,20 +185,20 @@ namespace Task_1
                     }
                 }
 
-                int ChildCount = Childrens[position].Count;
-                bool shift = Childrens[position].IsLeaf ? String.Compare(Childrens[position].Data[(ChildCount) / 2].key, key) > 0 :
-                    String.Compare(Data[(Count + 1) / 2].key, Childrens[position].Data[(ChildCount) / 2].key) > 0;
-                Childrens[position].Insert(key, value, degree);
-                if (Childrens[position].Count > 2 * degree - 1)
+                int childCount = Children[position].Count;
+                bool shift = Children[position].IsLeaf ? String.Compare(Children[position].Data[(childCount) / 2].key, key) > 0 :
+                    String.Compare(Data[(Count + 1) / 2].key, Children[position].Data[childCount / 2].key) > 0;
+                Children[position].Insert(key, value, degree);
+                if (Children[position].Count > 2 * degree - 1)
                 {
-                    (Node leftNode, Node rightNode, string newKey, string newValue) = Childrens[position].SplitNode(degree, shift);
+                    (Node leftNode, Node rightNode, string newKey, string newValue) = Children[position].SplitNode(degree, shift);
                     int newPosition = AddData(newKey, newValue);
-                    Childrens[newPosition] = leftNode;
-                    Childrens[newPosition + 1] = rightNode;
+                    Children[newPosition] = leftNode;
+                    Children[newPosition + 1] = rightNode;
                 }
             }
 
-            public void DeleteDataByKey(string key)
+            public void DeleteChildByKey(string key)
             {
                 int position = -1;
                 for (int i = 0; i < Count; ++i)
@@ -216,12 +216,12 @@ namespace Task_1
                 for (int i = position; i < Count - 1; ++i)
                 {
                     Data[i] = Data[i + 1];
-                    Childrens[i] = Childrens[i + 1];
+                    Children[i] = Children[i + 1];
                 }
-                Childrens[Count - 1] = Childrens[Count];
+                Children[Count - 1] = Children[Count];
                 Data[Count - 1].key = null;
                 Data[Count - 1].value = null;
-                Childrens[Count] = null;
+                Children[Count] = null;
                 --Count;
             }
 
@@ -239,10 +239,10 @@ namespace Task_1
                     }
                     if (String.Compare(Data[i].key, key) > 0)
                     {
-                        return Childrens[i].FindNode(key);
+                        return Children[i].FindNode(key);
                     }
                 }
-                return Childrens[Count].FindNode(key);
+                return Children[Count].FindNode(key);
             }
         }
 
@@ -265,7 +265,7 @@ namespace Task_1
             else
             {
                 int index = root.FindIndexToInsertion(key);
-                shift = String.Compare(root.Data[root.Count / 2].key, root.Childrens[index].Data[root.Childrens[index].Count / 2].key) > 0;
+                shift = String.Compare(root.Data[root.Count / 2].key, root.Children[index].Data[root.Children[index].Count / 2].key) > 0;
             }
 
             root.Insert(key, value, degree);
@@ -274,23 +274,23 @@ namespace Task_1
                 (Node leftNode, Node rightNode, string newKey, string newValue) = root.SplitNode(degree, shift);
                 Node newRoot = new Node(degree);
                 newRoot.AddData(newKey, newValue);
-                newRoot.Childrens[0] = leftNode;
-                newRoot.Childrens[1] = rightNode;
+                newRoot.Children[0] = leftNode;
+                newRoot.Children[1] = rightNode;
                 newRoot.IsLeaf = false;
                 root = newRoot;
-                root.Childrens[0].Parent = root;
-                root.Childrens[1].Parent = root;
+                root.Children[0].Parent = root;
+                root.Children[1].Parent = root;
             }
         }
 
         private Node MergeNodes(Node firstNode, Node secondNode, Node parent, int position)
         {
-            Node mergedNode = new Node(degree);
+            var mergedNode = new Node(degree);
             firstNode.CopyNode(mergedNode, 0, firstNode.Count);
             mergedNode.Data[mergedNode.Count] = parent.Data[position];
             ++mergedNode.Count;
             secondNode.CopyNode(mergedNode, 0, secondNode.Count);
-            mergedNode.IsLeaf = mergedNode.Childrens[0] == null;
+            mergedNode.IsLeaf = mergedNode.Children[0] == null;
             return mergedNode;
         }
 
@@ -306,18 +306,18 @@ namespace Task_1
             for (int i = node.Count - 1; i >= 0; --i)
             {
                 node.Data[i + 1] = node.Data[i];
-                node.Childrens[i + 2] = node.Childrens[i + 1];
+                node.Children[i + 2] = node.Children[i + 1];
             }
-            node.Childrens[1] = node.Childrens[0];
+            node.Children[1] = node.Children[0];
             node.Data[0] = parent.Data[position];
             ++node.Count;
             parent.Data[position] = sibling.Data[sibling.Count - 1];
-            node.Childrens[0] = sibling.Childrens[sibling.Count];
-            if (node.Childrens[0] != null)
+            node.Children[0] = sibling.Children[sibling.Count];
+            if (node.Children[0] != null)
             {
-                node.Childrens[0].Parent = node;
+                node.Children[0].Parent = node;
             }
-            sibling.Childrens[sibling.Count] = null;
+            sibling.Children[sibling.Count] = null;
             sibling.Data[sibling.Count - 1] = (null, null);
             --sibling.Count;
         }
@@ -327,18 +327,18 @@ namespace Task_1
             node.Data[node.Count] = parent.Data[position];
             ++node.Count;
             parent.Data[position] = sibling.Data[0];
-            node.Childrens[node.Count] = sibling.Childrens[0];
-            if (node.Childrens[node.Count] != null)
+            node.Children[node.Count] = sibling.Children[0];
+            if (node.Children[node.Count] != null)
             {
-                node.Childrens[node.Count].Parent = node;
+                node.Children[node.Count].Parent = node;
             }
             for (int i = 0; i < sibling.Count - 1; ++i)
             {
                 sibling.Data[i] = sibling.Data[i + 1];
-                sibling.Childrens[i] = sibling.Childrens[i + 1];
+                sibling.Children[i] = sibling.Children[i + 1];
             }
-            sibling.Childrens[sibling.Count - 1] = sibling.Childrens[sibling.Count];
-            sibling.Childrens[sibling.Count] = null;
+            sibling.Children[sibling.Count - 1] = sibling.Children[sibling.Count];
+            sibling.Children[sibling.Count] = null;
             sibling.Data[sibling.Count - 1] = (null, null);
             --sibling.Count;
         }
@@ -350,21 +350,21 @@ namespace Task_1
             position = 0;
             for (int i = 0; i < parent.Count + 1; ++i)
             {
-                if (parent.Childrens[i] == node)
+                if (parent.Children[i] == node)
                 {
                     position = i;
                     if (i > 0 && i < parent.Count)
                     {
-                        leftSibling = parent.Childrens[i - 1];
-                        rightSibling = parent.Childrens[i + 1];
+                        leftSibling = parent.Children[i - 1];
+                        rightSibling = parent.Children[i + 1];
                     }
                     if (i == 0)
                     {
-                        rightSibling = parent.Childrens[i + 1];
+                        rightSibling = parent.Children[i + 1];
                     }
                     if (i == parent.Count)
                     {
-                        leftSibling = parent.Childrens[i - 1];
+                        leftSibling = parent.Children[i - 1];
                     }
                     break;
                 }
@@ -396,14 +396,14 @@ namespace Task_1
 
             Node newNode = leftSibling != null ? MergeNodes(leftSibling, node, parent, position - 1) : MergeNodes(node, rightSibling, parent, position);
             int index = leftSibling != null ? position : position + 1;
-            parent.Childrens[index] = newNode;
-            parent.DeleteDataByKey(parent.Data[index - 1].key);
+            parent.Children[index] = newNode;
+            parent.DeleteChildByKey(parent.Data[index - 1].key);
             
             if (parent.Count == 0 && parent == root)
             {
                 root = null;
                 root = newNode;
-                if (root.Childrens[0] != null)
+                if (root.Children[0] != null)
                 {
                     root.IsLeaf = false;
                 }
@@ -415,13 +415,7 @@ namespace Task_1
         }
 
         private Node GetMostRightNodeOfSubtree(Node node)
-        {
-            if (node.IsLeaf)
-            {
-                return node;
-            }
-            return GetMostRightNodeOfSubtree(node.Childrens[node.Count]);
-        }
+            => node.IsLeaf ? node : GetMostRightNodeOfSubtree(node.Children[node.Count]);
 
         /// <summary>
         /// Removes a key-value pair from the tree by key.
@@ -440,12 +434,12 @@ namespace Task_1
 
             if (node.IsLeaf)
             {
-                node.DeleteDataByKey(key);
+                node.DeleteChildByKey(key);
                 Rebalance(node);
                 return;
             }
 
-            Node mostRightNode = GetMostRightNodeOfSubtree(node.Childrens[keyIndex]);
+            Node mostRightNode = GetMostRightNodeOfSubtree(node.Children[keyIndex]);
             node.Data[keyIndex] = mostRightNode.Data[mostRightNode.Count - 1];
             mostRightNode.Data[mostRightNode.Count - 1] = (null, null);
             --mostRightNode.Count;
