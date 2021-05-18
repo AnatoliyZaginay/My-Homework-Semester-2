@@ -2,6 +2,9 @@
 
 namespace Task_1
 {
+    /// <summary>
+    /// Operator class.
+    /// </summary>
     abstract class Operator : ITreeElement
     {
         /// <summary>

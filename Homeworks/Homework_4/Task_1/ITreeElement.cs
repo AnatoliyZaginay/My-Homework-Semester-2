@@ -2,6 +2,9 @@
 
 namespace Task_1
 {
+    /// <summary>
+    /// Interface of parse tree element.
+    /// </summary>
     interface ITreeElement
     {
         /// <summary>

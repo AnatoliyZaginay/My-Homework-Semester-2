@@ -2,6 +2,9 @@
 
 namespace Task_1
 {
+    /// <summary>
+    /// Operand class.
+    /// </summary>
     class Operand : ITreeElement
     {
         /// <summary>
