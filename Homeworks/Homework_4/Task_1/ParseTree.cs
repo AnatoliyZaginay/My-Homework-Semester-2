@@ -24,8 +24,25 @@ namespace Task_1
             root = AddElement(expression, ref index);
         }
 
-        private bool isOperator(string symbol)
+        private static bool IsOperator(string symbol)
             => (symbol == "+" || symbol == "-" || symbol == "*" || symbol == "/");
+
+        private static Operator GetOperationType(string operation)
+        {
+            switch (operation)
+            {
+                case "+":
+                    return new Plus();
+                case "-":
+                    return new Minus();
+                case "*":
+                    return new Multiplication();
+                case "/":
+                    return new Divison();
+                default:
+                    throw new ArgumentException();
+            }
+        }
 
         private ITreeElement AddElement(string[] expression, ref int index)
         {
@@ -34,9 +51,9 @@ namespace Task_1
                 throw new ArgumentException();
             }
 
-            if (isOperator(expression[index]))
+            if (IsOperator(expression[index]))
             {
-                var newOperator = new Operator(expression[index]);
+                var newOperator = GetOperationType(expression[index]);
                 ++index;
                 newOperator.LeftChild = AddElement(expression, ref index);
                 newOperator.RightChild = AddElement(expression, ref index);
