@@ -6,67 +6,85 @@ namespace Task_1.Tests
     [TestFixture]
     public class Tests
     {
-        private BTree tree = new BTree(2);
+        private BTree tree;
 
-        private string[] array = new string[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j" };
+        private static string[] symbols = "a b c d e f g h i j k l m n o p q r s t u v w x y z".Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
 
-        [SetUp]
-        public void Setup()
+        private void InitializeTree(BTree tree)
         {
-            foreach (string symbol in array)
+            foreach (var symbol in symbols)
             {
                 tree.Insert(symbol, symbol);
             }
         }
 
-        [Test]
-        public void TreeShouldContainInsertedKeys()
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void TreeShouldContainInsertedKeys(int degree)
         {
-            foreach (string symbol in array)
+            tree = new(degree);
+            InitializeTree(tree);
+
+            foreach (var symbol in symbols)
             {
                 Assert.IsTrue(tree.Contains(symbol));
             }
         }
 
-        [Test]
-        public void GetValueShouldReturnCorrectValues()
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void GetValueShouldReturnCorrectValues(int degree)
         {
-            foreach (string symbol in array)
+            tree = new(degree);
+            InitializeTree(tree);
+
+            foreach (string symbol in symbols)
             {
-                Assert.AreEqual(tree.GetValue(symbol), symbol);
+                Assert.AreEqual(symbol, tree.GetValue(symbol));
             }
             Assert.Throws<System.ArgumentException>(() => tree.GetValue("invalidKey"));
         }
 
-        [Test]
-        public void ValueShouldBeChangedAfterChangingValue()
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void ValueShouldBeChangedAfterChangingValue(int degree)
         {
-            tree.ChangeValue("d", "root");
-            tree.ChangeValue("f", "internalNode");
-            tree.ChangeValue("i", "leaf");
-            Assert.AreEqual(tree.GetValue("d"), "root");
-            Assert.AreEqual(tree.GetValue("f"), "internalNode");
-            Assert.AreEqual(tree.GetValue("i"), "leaf");
+            tree = new(degree);
+            InitializeTree(tree);
+
+            tree.ChangeValue("o", "o2");
+            tree.ChangeValue("d", "d2");
+            tree.ChangeValue("h", "h2");
+            tree.ChangeValue("i", "i2");
+            Assert.AreEqual("o2", tree.GetValue("o"));
+            Assert.AreEqual("d2", tree.GetValue("d"));
+            Assert.AreEqual("h2", tree.GetValue("h"));
+            Assert.AreEqual("i2", tree.GetValue("i"));
 
             Assert.Throws<System.ArgumentException>(() => tree.ChangeValue("invalidKey", "invalidValue"));
         }
 
-        [Test]
-        public void InsertingExistingKeyShouldChangeValue()
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void InsertingExistingKeyShouldChangeValue(int degree)
         {
-            tree.Insert("d", "root");
-            tree.Insert("b", "internalNode");
-            tree.Insert("a", "leaf");
-            Assert.AreEqual(tree.GetValue("d"), "root");
-            Assert.AreEqual(tree.GetValue("b"), "internalNode");
-            Assert.AreEqual(tree.GetValue("a"), "leaf");
+            tree = new(degree);
+            InitializeTree(tree);
+
+            tree.ChangeValue("o", "o2");
+            tree.ChangeValue("d", "d2");
+            tree.ChangeValue("h", "h2");
+            tree.ChangeValue("i", "i2");
+            Assert.AreEqual("o2", tree.GetValue("o"));
+            Assert.AreEqual("d2", tree.GetValue("d"));
+            Assert.AreEqual("h2", tree.GetValue("h"));
+            Assert.AreEqual("i2", tree.GetValue("i"));
         }
 
         [TestCaseSource(nameof(TestDataForDeletion))]
-        public void TreeShouldNotContainKeyAfterDeletion(string key)
+        public void TreeShouldNotContainKeyAfterDeletion(int degree, string key)
         {
+            tree = new(degree);
+            InitializeTree(tree);
+
             tree.Delete(key);
-            foreach (string symbol in array)
+            foreach (string symbol in symbols)
             {
                 if (symbol == key)
                 {
@@ -77,14 +95,22 @@ namespace Task_1.Tests
             }
         }
 
-        [Test]
-        public void DeleteShouldThrowExceptionIfKeyIsNotConatinedInTree()
-            => Assert.Throws<System.ArgumentException>(() => tree.Delete("invalidKey"));
-
-        [Test]
-        public void DeletingEntireTreeTest()
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void DeleteShouldThrowExceptionIfKeyIsNotConatinedInTree(int degree)
         {
-            foreach (string symbol in array)
+            tree = new(degree);
+            InitializeTree(tree);
+
+            Assert.Throws<System.ArgumentException>(() => tree.Delete("invalidKey"));
+        }
+
+        [TestCaseSource(nameof(TreeDegrees))]
+        public void DeletingEntireTreeTest(int degree)
+        {
+            tree = new(degree);
+            InitializeTree(tree);
+
+            foreach (string symbol in symbols)
             {
                 Assert.IsTrue(tree.Contains(symbol));
                 tree.Delete(symbol);
@@ -94,18 +120,23 @@ namespace Task_1.Tests
             Assert.Throws<System.InvalidOperationException>(() => tree.Delete("invalidKey"));
         }
 
-        private static IEnumerable<string> TestDataForDeletion()
+        private static IEnumerable<int> TreeDegrees()
         {
-            yield return "a";
-            yield return "b";
-            yield return "c";
-            yield return "d";
-            yield return "e";
-            yield return "f";
-            yield return "g";
-            yield return "h";
-            yield return "i";
-            yield return "j";
+            for (int i = 2; i < 15; ++i)
+            {
+                yield return i;
+            }
+        }
+
+        private static IEnumerable<object[]> TestDataForDeletion()
+        {
+            for (int i = 2; i< 15; ++i)
+            {
+                foreach (var symbol in symbols)
+                {
+                    yield return new object[] { i, symbol };
+                }
+            }
         }
     }
 }
