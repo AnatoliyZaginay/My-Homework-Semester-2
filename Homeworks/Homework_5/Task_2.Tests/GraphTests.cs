@@ -46,20 +46,6 @@ namespace Task_2.Tests
         private Graph notConnectedGraph = new Graph("../../../NotConnectedGraph.txt");
 
         [Test]
-        public void ReadGraphShouldWorkCorrectly()
-        {
-            Assert.AreEqual(expectedGraphConnections, graph.MatrixOfConnections);
-            Assert.AreEqual(expectedGraphLengths, graph.MatrixOfLengths);
-        }
-
-        [Test]
-        public void WriteGraphShouldWorkCorrectly()
-        {
-            graph.WriteToFile("../../../WriteGraphResult.txt");
-            Assert.IsTrue(FileComparator.FilesAreEqual("../../../Graph.txt", "../../../WriteGraphResult.txt"));
-        }
-
-        [Test]
         public void IsConnectedTest()
         {
             Assert.IsTrue(graph.IsConnected());

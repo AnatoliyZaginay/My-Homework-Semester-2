@@ -22,7 +22,7 @@ namespace Task_2
             }
 
             var optimalNetwork = network.MakeMaximumSpanningTree();
-            optimalNetwork.WriteToFile(outputFilePath);
+            GraphInFile.WriteToFile(optimalNetwork, outputFilePath);
         }
     }
 }
