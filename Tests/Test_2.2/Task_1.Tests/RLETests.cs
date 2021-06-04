@@ -42,6 +42,7 @@ namespace Task_1.Tests
             yield return new object[] { new byte[] { 1, 1, 1, 1, 4, 4 }, new byte[] { 4, 1, 2, 4 } };
             yield return new object[] { new byte[] { 1, 1, 1, 1, 4, 4 }, new byte[] { 4, 1, 2, 4 } };
             yield return new object[] { new byte[] { 1, 2, 3, 4, 5, 6 }, new byte[] { 1, 1, 1, 2, 1, 3, 1, 4, 1, 5, 1, 6 } };
+            yield return new object[] { new byte[0], new byte[0] };
         }
 
         private static IEnumerable<object[]> IncorrectCasesForCompressing()
