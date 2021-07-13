@@ -92,7 +92,6 @@ namespace TestHwProj2
             return list.ToArray();
         }
 
-
         static void Main(string[] args)
         {
             Entity1[] e1 = { new Entity1(1, "data1", new DateTime(2000, 10, 5), 1, true),
